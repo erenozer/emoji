@@ -1,7 +1,10 @@
 package com.emojibot;
 
+
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Bot emojiBot = new Bot();
     }
 }
