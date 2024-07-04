@@ -1,7 +1,7 @@
 package com.emojibot;
 
 
-import javax.security.auth.login.LoginException;
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 
 public class Main {
     public static void main(String[] args) {
