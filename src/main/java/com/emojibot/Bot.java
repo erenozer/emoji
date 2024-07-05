@@ -1,5 +1,6 @@
 package com.emojibot;
 
+import com.emojibot.commands.CommandManager;
 import com.emojibot.events.EventListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -44,12 +45,15 @@ public class Bot {
                 .setActivity(Activity.playing("/start to get started"))
                 .setMemberCachePolicy(MemberCachePolicy.NONE)
                 //.setShardsTotal(numberOfShards)
-                .addEventListeners(new EventListener())
+                .addEventListeners(new EventListener(), new CommandManager(this))
                 //.enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .build();
 
     }
 
+    public static void main(String[] args) {
+        Bot emojiBot = new Bot();
+    }
 
     public ShardManager getShardManager() {
         return shardManager;
