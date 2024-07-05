@@ -5,22 +5,19 @@ import com.emojibot.events.EventListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
-//TODO
 import javax.security.auth.login.LoginException;
 
 public class Bot {
     private static final Dotenv config = Dotenv.configure().load();
-    private final ShardManager shardManager;
+    private ShardManager shardManager;
+    private final EmojiCache emojiCache = new EmojiCache();
 
-    /**
-     * Return the token according to dev/public status from config
-     *
-     * @return token to be used
-     */
     public String getToken() {
         if (BotProperties.getDevMode())
             return config.get("TOKEN_DEV");
@@ -29,30 +26,33 @@ public class Bot {
     }
 
     public Bot() {
-        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createLight(getToken());
+        try {
 
-        /*
-        // Calculate the number of shards needed manually if auto is not good enough
-        int totalGuilds = 96500;
-        int maxGuildsPerShard = 1500; // Adjust based on your performance needs
+            /*
+            // Calculate the number of shards needed manually if auto is not good enough
+            int totalGuilds = 96500;
+            int maxGuildsPerShard = 1500; // Adjust based on your performance needs
 
-        int numberOfShards = (int) Math.ceil((double) totalGuilds / maxGuildsPerShard);
-        System.out.println("Total shard count: " + numberOfShards);
-        */
+            int numberOfShards = (int) Math.ceil((double) totalGuilds / maxGuildsPerShard);
+            System.out.println("Total shard count: " + numberOfShards);
+            */
 
-        shardManager = builder
-                .setStatus(OnlineStatus.ONLINE)
-                .setActivity(Activity.playing("/start to get started"))
-                .setMemberCachePolicy(MemberCachePolicy.NONE)
-                //.setShardsTotal(numberOfShards)
-                .addEventListeners(new EventListener(), new CommandManager(this))
-                //.enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                .build();
+            DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(getToken())
+                    .setStatus(OnlineStatus.ONLINE)
+                    .setActivity(Activity.playing("hey!"))
+                    .setMemberCachePolicy(MemberCachePolicy.NONE)
+                    .enableIntents(GatewayIntent.GUILD_EMOJIS_AND_STICKERS) // Enable required intents
+                    .addEventListeners(new EventListener(), new CommandManager(this), emojiCache);
 
-    }
+            shardManager = builder.build();
+            System.out.println("Bot started successfully!");
 
-    public static void main(String[] args) {
-        Bot emojiBot = new Bot();
+        } catch (InvalidTokenException e) {
+            System.err.println("Invalid token provided. Please check your token and try again.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to initialize the bot", e);
+        }
     }
 
     public ShardManager getShardManager() {
@@ -63,4 +63,11 @@ public class Bot {
         return config;
     }
 
+    public EmojiCache getEmojiCache() {
+        return emojiCache;
+    }
+
+    public static void main(String[] args) {
+        new Bot();
+    }
 }

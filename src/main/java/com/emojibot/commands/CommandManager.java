@@ -1,7 +1,11 @@
 package com.emojibot.commands;
 
 import com.emojibot.Bot;
+import com.emojibot.commands.emoji.SearchCommand;
 import com.emojibot.commands.util.PingCommand;
+
+
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -40,7 +44,8 @@ public class CommandManager extends ListenerAdapter {
 
     public CommandManager(Bot bot) {
         createCommandMap(
-                new PingCommand(bot)
+                new PingCommand(bot),
+                new SearchCommand(bot)
         );
     }
 
