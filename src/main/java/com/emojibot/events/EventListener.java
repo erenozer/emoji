@@ -47,7 +47,11 @@ public class EventListener extends ListenerAdapter {
     }
     */
 
-    // event.getState().name returns all capitalized event name, this generates a better event name for the logger
+    /**
+     * event.getState().name returns all capitalized event name, this generates a better event name for the logger
+     * @param str event string
+     * @return better formatted event name
+     */
     private static String generateEventName(String str) {
         if (str == null || str.isEmpty()) {
             return str;
