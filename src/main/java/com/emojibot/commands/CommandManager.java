@@ -8,6 +8,8 @@ import com.emojibot.commands.util.PingCommand;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -18,6 +20,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -95,14 +98,19 @@ public class CommandManager extends ListenerAdapter {
      * For registering GUILD slash commands (for testing purposes)
      */
     @Override
-    public void onGuildReady(GuildReadyEvent event) {
+    public void onGuildReady(@NotNull GuildReadyEvent event) {
         // Register slash commands
-        event.getGuild().updateCommands().addCommands(unpackCommandData()).queue(succ -> {}, fail -> {});
+        registerCommands(event);
+    }
+
+    @Override
+    public void onGuildJoin(@NotNull GuildJoinEvent event) {
+        // Register slash commands
+        registerCommands(event);
     }
 
     /**
      * Global slash commands (can take up to an hour to update! - for production)
-     * @param event
      */
     /*
     @Override
@@ -110,4 +118,8 @@ public class CommandManager extends ListenerAdapter {
         event.getJDA().updateCommands().addCommands(unpackCommandData()).queue(succ -> {}, fail -> {});
     }
     */
+
+    private void registerCommands(GenericGuildEvent event) {
+        event.getGuild().updateCommands().addCommands(unpackCommandData()).queue(succ -> {}, fail -> {});
+    }
 }
