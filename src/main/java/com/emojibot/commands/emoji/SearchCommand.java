@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SearchCommand extends Command {
@@ -26,7 +27,7 @@ public class SearchCommand extends Command {
 
     @Override
     public void run(SlashCommandInteractionEvent event) {
-        String emojiName = normalize(event.getOption("name").getAsString());
+        String emojiName = normalize(Objects.requireNonNull(event.getOption("name")).getAsString());
         List<RichCustomEmoji> emojiList = emojiCache.getEmojis(emojiName);
 
         if (emojiList != null && !emojiList.isEmpty()) {
