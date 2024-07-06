@@ -15,7 +15,10 @@ public class PingCommand extends Command {
 
     @Override
     public void run(SlashCommandInteractionEvent event) {
-        event.reply("Pong!").queue();
+        long gatewayPing = event.getJDA().getGatewayPing();
+        long restPing = event.getJDA().getRestPing().complete();
+
+        event.reply(String.format("Pong! | Gateway Ping: %sms, Rest Ping: %sms", gatewayPing, restPing)).queue();
 
     }
 }

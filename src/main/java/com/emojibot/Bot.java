@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 
@@ -45,7 +47,6 @@ public class Bot {
                     .addEventListeners(new EventListener(), new CommandManager(this), emojiCache);
 
             shardManager = builder.build();
-            System.out.println("Bot started successfully!");
 
         } catch (InvalidTokenException e) {
             System.err.println("Invalid token provided. Please check your token and try again.");

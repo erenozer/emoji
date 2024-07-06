@@ -16,7 +16,6 @@ public class EmojiCache extends ListenerAdapter {
 
     @Override
     public void onGuildReady(GuildReadyEvent event) {
-        System.out.println("Caching emojis for guild " + event.getGuild().getName());
         cacheEmojis(event.getGuild());
     }
 
@@ -37,6 +36,14 @@ public class EmojiCache extends ListenerAdapter {
 
     public List<RichCustomEmoji> getEmojis(String emojiName) {
         return emojiCache.getOrDefault(emojiName, new ArrayList<>());
+    }
+
+    public List<RichCustomEmoji> getAllEmojis() {
+        List<RichCustomEmoji> allEmojis = new ArrayList<>();
+        for (List<RichCustomEmoji> emojis : emojiCache.values()) {
+            allEmojis.addAll(emojis);
+        }
+        return allEmojis;
     }
 
     public void clearCache() {
