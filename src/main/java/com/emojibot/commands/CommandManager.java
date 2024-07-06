@@ -1,6 +1,7 @@
 package com.emojibot.commands;
 
 import com.emojibot.Bot;
+import com.emojibot.commands.emoji.EmojifyCommand;
 import com.emojibot.commands.emoji.SearchCommand;
 import com.emojibot.commands.util.PingCommand;
 
@@ -48,7 +49,8 @@ public class CommandManager extends ListenerAdapter {
     public CommandManager(Bot bot) {
         createCommandMap(
                 new PingCommand(bot),
-                new SearchCommand(bot)
+                new SearchCommand(bot),
+                new EmojifyCommand(bot)
         );
     }
 
