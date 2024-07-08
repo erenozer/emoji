@@ -1,4 +1,4 @@
-package com.emojibot.commands.util;
+package com.emojibot.commands.other;
 
 import com.emojibot.Bot;
 import com.emojibot.commands.Command;

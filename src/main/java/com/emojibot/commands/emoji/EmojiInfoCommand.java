@@ -10,6 +10,10 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.util.List;
 import java.util.Objects;
 
+
+// TODO: embed manager with nice emojis, implement the emoji info command with it
+
+
 public class EmojiInfoCommand extends Command {
     private final EmojiCache emojiCache;
 

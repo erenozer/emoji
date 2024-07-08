@@ -2,7 +2,10 @@ package com.emojibot.commands.emoji;
 
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.Command;
+import com.emojibot.commands.util.EmbedCreator;
 import com.emojibot.Bot;
+import com.emojibot.BotConfig;
+
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -27,6 +30,9 @@ public class SearchCommand extends Command {
 
     @Override
     public void run(SlashCommandInteractionEvent event) {
+        // Defer the reply to avoid the 3 second timeout while searching, will use hooks to reply later
+        
+        event.deferReply().queue();
         String emojiName = normalize(Objects.requireNonNull(event.getOption("emojiname")).getAsString());
         List<RichCustomEmoji> emojiList = emojiCache.getEmojis(emojiName);
 
@@ -39,9 +45,9 @@ public class SearchCommand extends Command {
             List<RichCustomEmoji> similarEmojis = searchSimilarEmojis(emojiName);
             if (!similarEmojis.isEmpty()) {
                 replyWithFoundEmojis(event, similarEmojis);
-                event.getHook().sendMessage("Similar named emojis were also added!").setEphemeral(true).queue();
+                event.getHook().sendMessage(BotConfig.infoEmoji() + " Similar named emojis were also added!").setEphemeral(true).queue();
             } else {
-                event.reply("I couldn't find similar or exact matches to your search. :(").queue();
+                event.getHook().sendMessage("I couldn't find similar or exact matches to your search. :(").queue();
             }
         }
     }
@@ -56,7 +62,7 @@ public class SearchCommand extends Command {
             replyMessage.append(emoji.getAsMention()).append(" ");
             count++;
         }
-        event.reply(replyMessage.toString()).queue();
+        event.getHook().sendMessage(replyMessage.toString()).queue();
     }
 
     private List<RichCustomEmoji> searchSimilarEmojis(String emojiName) {

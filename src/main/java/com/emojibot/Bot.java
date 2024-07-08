@@ -17,7 +17,7 @@ public class Bot {
     private final EmojiCache emojiCache = new EmojiCache();
 
     public String getToken() {
-        if (BotProperties.getDevMode())
+        if (BotConfig.getDevMode())
             return config.get("TOKEN_DEV");
         else
             return config.get("TOKEN_PUBLIC");

@@ -6,9 +6,7 @@ import com.emojibot.commands.emoji.EmojiInfoCommand;
 import com.emojibot.commands.emoji.EmojifyCommand;
 import com.emojibot.commands.emoji.LinkCommand;
 import com.emojibot.commands.emoji.SearchCommand;
-import com.emojibot.commands.util.PingCommand;
-
-
+import com.emojibot.commands.other.PingCommand;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
