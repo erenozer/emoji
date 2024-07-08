@@ -17,9 +17,9 @@ public class SearchCommand extends Command {
     public SearchCommand(Bot bot) {
         super(bot);
         this.name = "search";
-        this.description = "Search for specific emojis.";
+        this.description = "Search for specific emojis";
 
-        OptionData emojiNameArgument = new OptionData(OptionType.STRING, "name", "Emoji name to be searched", true);
+        OptionData emojiNameArgument = new OptionData(OptionType.STRING, "emojiname", "Emoji name to be searched", true, false);
         this.args.add(emojiNameArgument);
 
         this.emojiCache = bot.getEmojiCache();
@@ -27,38 +27,46 @@ public class SearchCommand extends Command {
 
     @Override
     public void run(SlashCommandInteractionEvent event) {
-        String emojiName = normalize(Objects.requireNonNull(event.getOption("name")).getAsString());
+        String emojiName = normalize(Objects.requireNonNull(event.getOption("emojiname")).getAsString());
         List<RichCustomEmoji> emojiList = emojiCache.getEmojis(emojiName);
 
-        if (emojiList != null && !emojiList.isEmpty()) {
-            StringBuilder replyMessage = new StringBuilder("Found emojis: ");
-            for (RichCustomEmoji emoji : emojiList) {
-                replyMessage.append(emoji.getAsMention()).append(" ");
-            }
-            event.reply(replyMessage.toString()).queue();
+        // getEmojis returns a list of emojis that match the search query
+        // that list will not be null, if no emojis are found, the list will be empty
+        if (!emojiList.isEmpty() && emojiList.size() > 15) {
+            replyWithFoundEmojis(event, emojiList);
         } else {
-            // Try a fuzzy search if no exact match found - GPT methodu
+            // Try a fuzzy search if less than 15 emojis are found
             List<RichCustomEmoji> similarEmojis = searchSimilarEmojis(emojiName);
             if (!similarEmojis.isEmpty()) {
-                StringBuilder replyMessage = new StringBuilder("No exact matches found. Here are some similar results: ");
-                for (RichCustomEmoji emoji : similarEmojis) {
-                    replyMessage.append(emoji.getAsMention()).append(" ");
-                }
-                event.reply(replyMessage.toString()).queue();
+                replyWithFoundEmojis(event, similarEmojis);
+                event.getHook().sendMessage("Similar named emojis were also added!").setEphemeral(true).queue();
             } else {
                 event.reply("I couldn't find similar or exact matches to your search. :(").queue();
             }
         }
     }
 
-    private String normalize(String input) {
-        return input.trim().toLowerCase().replaceAll("\\s+", "");
+    private void replyWithFoundEmojis(SlashCommandInteractionEvent event, List<RichCustomEmoji> emojiList) {
+        StringBuilder replyMessage = new StringBuilder();
+        int count = 0;
+        for (RichCustomEmoji emoji : emojiList) {
+            if (count >= 25) {
+                break;
+            }
+            replyMessage.append(emoji.getAsMention()).append(" ");
+            count++;
+        }
+        event.reply(replyMessage.toString()).queue();
     }
 
     private List<RichCustomEmoji> searchSimilarEmojis(String emojiName) {
         return emojiCache.getAllEmojis().stream()
                 .filter(emoji -> levenshteinDistance(emojiName, normalize(emoji.getName())) <= 2)
                 .collect(Collectors.toList());
+    }
+
+    private String normalize(String input) {
+        return input.trim().toLowerCase().replaceAll("\\s+", "");
     }
 
     private int levenshteinDistance(String s1, String s2) {

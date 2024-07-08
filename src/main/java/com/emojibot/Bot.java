@@ -1,6 +1,6 @@
 package com.emojibot;
 
-import com.emojibot.commands.CommandManager;
+import com.emojibot.events.CommandManager;
 import com.emojibot.events.EventListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -10,10 +10,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.security.auth.login.LoginException;
 
 public class Bot {
     private static final Dotenv config = Dotenv.configure().load();
@@ -51,7 +47,6 @@ public class Bot {
         } catch (InvalidTokenException e) {
             System.err.println("Invalid token provided. Please check your token and try again.");
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("Failed to initialize the bot", e);
         }
     }

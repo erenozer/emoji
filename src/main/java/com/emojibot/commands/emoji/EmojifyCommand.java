@@ -1,26 +1,23 @@
 package com.emojibot.commands.emoji;
 
-import com.emojibot.EmojiCache;
 import com.emojibot.commands.Command;
 import com.emojibot.Bot;
-import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class EmojifyCommand extends Command {
-    private static final HashMap<String, String> mapping = new HashMap<>();
+    private static final Map<String, String> mapping = new HashMap<>();
+    private static final Map<String, String> turkishToEnglish = new HashMap<>();
 
     public EmojifyCommand(Bot bot) {
         super(bot);
         this.name = "emojify";
-        this.description = "Emojifys the message you typed. Like: \uD83C\uDDED\uD83C\uDDEA\uD83C\uDDF1\uD83C\uDDF1\uD83C\uDDF4";
+        this.description = "Emojify your message";
 
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "text", "Text to be emojified", true);
         this.args.add(emojiNameArgument);
@@ -30,15 +27,24 @@ public class EmojifyCommand extends Command {
     @Override
     public void run(SlashCommandInteractionEvent event) {
         String text = Objects.requireNonNull(event.getOption("text")).getAsString();
-        final String[] text2 = {""};
-        Arrays.stream(text.split("")).forEach(a -> {
-            String mapped = mapping.get(a);
-            if (mapped == null) text2[0] = text2[0] + a;
-            else text2[0] += mapped;
-        });
+        if (text.length() > 50) {
+            event.reply("Your message should be less than 50 characters.").setEphemeral(true).queue();
+            return;
+        }
+        text = turToEng(text); // Convert Turkish characters to English equivalents
 
-        event.reply(text2[0]).queue();
+        StringBuilder emojifiedText = new StringBuilder();
+        for (char ch : text.toCharArray()) {
+            String mapped = mapping.get(String.valueOf(ch));
+            if (mapped != null) {
+                emojifiedText.append(mapped);
+            } else {
+                // Handle unmapped characters here, could add a space or skip them
+                emojifiedText.append(" "); // For example, add a space for unmapped characters
+            }
+        }
 
+        event.reply(emojifiedText.toString()).queue();
     }
 
     private static void initializeMapping() {
@@ -58,37 +64,31 @@ public class EmojifyCommand extends Command {
         mapping.put("#", ":hash:");
         mapping.put("*", ":asterisk:");
 
-
         String alphabet = "abcdefghijklmnopqrstuvwxyz";
         for (char c : alphabet.toCharArray()) {
             mapping.put(String.valueOf(c), ":regional_indicator_" + c + ":");
             mapping.put(String.valueOf(Character.toUpperCase(c)), ":regional_indicator_" + c + ":");
         }
+
+        turkishToEnglish.put("ı", "i");
+        turkishToEnglish.put("ğ", "g");
+        turkishToEnglish.put("ü", "u");
+        turkishToEnglish.put("ş", "s");
+        turkishToEnglish.put("ö", "o");
+        turkishToEnglish.put("ç", "c");
+        turkishToEnglish.put("İ", "I");
+        turkishToEnglish.put("Ğ", "G");
+        turkishToEnglish.put("Ü", "U");
+        turkishToEnglish.put("Ş", "S");
+        turkishToEnglish.put("Ö", "O");
+        turkishToEnglish.put("Ç", "C");
     }
 
     public static String turToEng(String string) {
-        HashMap<String, String> toTranslate = new HashMap<>();
-        toTranslate.put("ı", "i");
-        toTranslate.put("ğ", "g");
-        toTranslate.put("ü", "u");
-        toTranslate.put("ş", "s");
-        toTranslate.put("ö", "o");
-        toTranslate.put("ç", "c");
-        toTranslate.put("İ", "I");
-        toTranslate.put("Ğ", "G");
-        toTranslate.put("Ü", "U");
-        toTranslate.put("Ş", "S");
-        toTranslate.put("Ö", "O");
-        toTranslate.put("Ç", "C");
-
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < string.length(); i++) {
-            char c = string.charAt(i);
-            if (toTranslate.containsKey(c)) {
-                sb.append(toTranslate.get(c));
-            } else {
-                sb.append(c);
-            }
+        for (char c : string.toCharArray()) {
+            String translatedChar = turkishToEnglish.get(String.valueOf(c));
+            sb.append(translatedChar != null ? translatedChar : c);
         }
         return sb.toString();
     }
