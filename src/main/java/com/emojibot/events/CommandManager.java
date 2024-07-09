@@ -1,11 +1,12 @@
-package com.emojibot.commands;
+package com.emojibot.events;
 
 import com.emojibot.Bot;
+import com.emojibot.commands.Command;
+import com.emojibot.commands.emoji.EmojiInfoCommand;
 import com.emojibot.commands.emoji.EmojifyCommand;
+import com.emojibot.commands.emoji.LinkCommand;
 import com.emojibot.commands.emoji.SearchCommand;
-import com.emojibot.commands.util.PingCommand;
-
-
+import com.emojibot.commands.other.PingCommand;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
@@ -50,7 +51,9 @@ public class CommandManager extends ListenerAdapter {
         createCommandMap(
                 new PingCommand(bot),
                 new SearchCommand(bot),
-                new EmojifyCommand(bot)
+                new EmojifyCommand(bot),
+                new LinkCommand(bot),
+                new EmojiInfoCommand(bot)
         );
     }
 
@@ -105,6 +108,9 @@ public class CommandManager extends ListenerAdapter {
         registerCommands(event);
     }
 
+    /**
+     * For registering GUILD slash commands (for testing purposes)
+     */
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         // Register slash commands
@@ -114,12 +120,16 @@ public class CommandManager extends ListenerAdapter {
     /**
      * Global slash commands (can take up to an hour to update! - for production)
      */
+
     /*
     @Override
     public void onReady(ReadyEvent event) {
-        event.getJDA().updateCommands().addCommands(unpackCommandData()).queue(succ -> {}, fail -> {});
+        event.getJDA().updateCommands().queue();
+        //event.getJDA().updateCommands().addCommands(unpackCommandData()).queue(succ -> {}, fail -> {});
     }
-    */
+
+     */
+
 
     private void registerCommands(GenericGuildEvent event) {
         event.getGuild().updateCommands().addCommands(unpackCommandData()).queue(succ -> {}, fail -> {});
