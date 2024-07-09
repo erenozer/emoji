@@ -2,7 +2,8 @@ package com.emojibot.commands.emoji;
 
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.Command;
-import com.emojibot.commands.util.EmbedCreator;
+import com.emojibot.commands.utils.EmbedCreator;
+import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 
@@ -31,9 +32,12 @@ public class SearchCommand extends Command {
     @Override
     public void run(SlashCommandInteractionEvent event) {
         // Defer the reply to avoid the 3 second timeout while searching, will use hooks to reply later
-        
         event.deferReply().queue();
-        String emojiName = normalize(Objects.requireNonNull(event.getOption("emojiname")).getAsString());
+
+        String emojiInput = normalize(Objects.requireNonNull(event.getOption("emojiname")).getAsString());
+
+        String emojiName = EmojiInput.extractEmojiName(emojiInput);
+        
         List<RichCustomEmoji> emojiList = emojiCache.getEmojis(emojiName);
 
         // getEmojis returns a list of emojis that match the search query
@@ -41,18 +45,24 @@ public class SearchCommand extends Command {
         if (!emojiList.isEmpty() && emojiList.size() > 15) {
             replyWithFoundEmojis(event, emojiList);
         } else {
-            // Try a fuzzy search if less than 15 emojis are found
+            // Try a fuzzy search if less than 15 emojis are found/not found
             List<RichCustomEmoji> similarEmojis = searchSimilarEmojis(emojiName);
-            if (!similarEmojis.isEmpty()) {
+            if (similarEmojis.size() > emojiList.size()) {
+                // Reply with the similar emojis if they are more than the exact matches
                 replyWithFoundEmojis(event, similarEmojis);
-                event.getHook().sendMessage(BotConfig.infoEmoji() + " Similar named emojis were also added!").setEphemeral(true).queue();
+                event.getHook().sendMessage(BotConfig.infoEmoji() + " Similar named emojis were added!").setEphemeral(true).queue();
+            } else if(!emojiList.isEmpty()) { 
+                // Reply with the found emojis if there are any
+                replyWithFoundEmojis(event, emojiList);
             } else {
+                // No similar or exact matches found
                 event.getHook().sendMessage("I couldn't find similar or exact matches to your search. :(").queue();
             }
         }
     }
 
     private void replyWithFoundEmojis(SlashCommandInteractionEvent event, List<RichCustomEmoji> emojiList) {
+        // Create a reply message with the found emojis and send it
         StringBuilder replyMessage = new StringBuilder();
         int count = 0;
         for (RichCustomEmoji emoji : emojiList) {
@@ -66,12 +76,14 @@ public class SearchCommand extends Command {
     }
 
     private List<RichCustomEmoji> searchSimilarEmojis(String emojiName) {
+        // Search for emojis with a Levenshtein distance of 2 or less
         return emojiCache.getAllEmojis().stream()
                 .filter(emoji -> levenshteinDistance(emojiName, normalize(emoji.getName())) <= 2)
                 .collect(Collectors.toList());
     }
 
     private String normalize(String input) {
+        // Normalize the input by trimming, lowercasing and removing whitespaces
         return input.trim().toLowerCase().replaceAll("\\s+", "");
     }
 
