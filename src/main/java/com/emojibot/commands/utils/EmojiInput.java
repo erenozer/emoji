@@ -25,4 +25,8 @@ public class EmojiInput {
             return emojiInput;
         }
     }
+
+    public static String normalize(String input) {
+        return input.trim().replaceAll("\\s+", "");
+    }
 }

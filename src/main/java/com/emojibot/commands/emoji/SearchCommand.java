@@ -34,7 +34,7 @@ public class SearchCommand extends Command {
         // Defer the reply to avoid the 3 second timeout while searching, will use hooks to reply later
         event.deferReply().queue();
 
-        String emojiInput = normalize(Objects.requireNonNull(event.getOption("emojiname")).getAsString());
+        String emojiInput = EmojiInput.normalize(Objects.requireNonNull(event.getOption("emojiname")).getAsString());
 
         String emojiName = EmojiInput.extractEmojiName(emojiInput);
         
@@ -78,13 +78,8 @@ public class SearchCommand extends Command {
     private List<RichCustomEmoji> searchSimilarEmojis(String emojiName) {
         // Search for emojis with a Levenshtein distance of 2 or less
         return emojiCache.getAllEmojis().stream()
-                .filter(emoji -> levenshteinDistance(emojiName, normalize(emoji.getName())) <= 2)
+                .filter(emoji -> levenshteinDistance(emojiName, EmojiInput.normalize(emoji.getName())) <= 2)
                 .collect(Collectors.toList());
-    }
-
-    private String normalize(String input) {
-        // Normalize the input by trimming, lowercasing and removing whitespaces
-        return input.trim().toLowerCase().replaceAll("\\s+", "");
     }
 
     private int levenshteinDistance(String s1, String s2) {
