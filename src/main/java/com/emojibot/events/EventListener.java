@@ -15,7 +15,7 @@ public class EventListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event) {
-        int shardId = event.getJDA().getShardInfo().getShardId();
+        //int shardId = event.getJDA().getShardInfo().getShardId();
         Logger logger = LoggerFactory.getLogger(generateEventName(event.getState().name()));
         logger.info("Logged in as {}", event.getJDA().getSelfUser().getName());
     }
@@ -26,7 +26,7 @@ public class EventListener extends ListenerAdapter {
      */
     @Override
     public void onSessionRecreate(SessionRecreateEvent event) {
-        int shardId = event.getJDA().getShardInfo().getShardId();
+        //int shardId = event.getJDA().getShardInfo().getShardId();
         Logger logger = LoggerFactory.getLogger(generateEventName(event.getState().name()));
         logger.info("Attempting to reconnect...");
     }
@@ -37,7 +37,7 @@ public class EventListener extends ListenerAdapter {
      */
     @Override
     public void onSessionInvalidate(SessionInvalidateEvent event) {
-        int shardId = event.getJDA().getShardInfo().getShardId();
+        //int shardId = event.getJDA().getShardInfo().getShardId();
         Logger logger = LoggerFactory.getLogger(generateEventName(event.getState().name()));
         logger.info("Invalidated session completely.");
     }
@@ -48,7 +48,7 @@ public class EventListener extends ListenerAdapter {
      */
     @Override
     public void onSessionDisconnect(SessionDisconnectEvent event) {
-        int shardId = event.getJDA().getShardInfo().getShardId();
+        //int shardId = event.getJDA().getShardInfo().getShardId();
         Logger logger = LoggerFactory.getLogger(generateEventName(event.getState().name()));
         logger.warn("Disconnected from the gateway, code: {}", event.getCloseCode());
     }

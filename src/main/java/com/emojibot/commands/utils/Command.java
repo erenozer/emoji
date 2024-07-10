@@ -1,4 +1,4 @@
-package com.emojibot.commands;
+package com.emojibot.commands.utils;
 
 import com.emojibot.Bot;
 import net.dv8tion.jda.api.Permission;

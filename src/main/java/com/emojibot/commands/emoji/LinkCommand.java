@@ -1,8 +1,8 @@
 package com.emojibot.commands.emoji;
 
-import com.emojibot.commands.Command;
 import com.emojibot.Bot;
 import com.emojibot.EmojiCache;
+import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

@@ -1,7 +1,7 @@
 package com.emojibot.commands.emoji;
 
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.Command;
+import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
@@ -14,16 +14,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Objects;
 
 
-// TODO: embed manager with nice emojis, implement the emoji info command with it
-
-
 public class EmojiInfoCommand extends Command {
-    private final EmojiCache emojiCache;
-
     public EmojiInfoCommand(Bot bot) {
         super(bot);
         this.name = "info";
@@ -31,8 +25,6 @@ public class EmojiInfoCommand extends Command {
 
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "emoji", "Emoji to get it's info", true, false);
         this.args.add(emojiNameArgument);
-
-        this.emojiCache = bot.getEmojiCache();
     }
 
     @Override

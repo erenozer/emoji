@@ -34,10 +34,12 @@ public class Bot {
             int numberOfShards = (int) Math.ceil((double) totalGuilds / maxGuildsPerShard);
             System.out.println("Total shard count: " + numberOfShards);
             */
-
+            
+            // Blue emoji color - 0xa7cfe2
+            
             DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(getToken())
-                    .setStatus(OnlineStatus.ONLINE)
-                    .setActivity(Activity.playing("hey!"))
+                    .setStatus(OnlineStatus.IDLE)
+                    .setActivity(Activity.watching("/start to get started with Emoji!"))
                     .setMemberCachePolicy(MemberCachePolicy.NONE)
                     .enableIntents(GatewayIntent.GUILD_EMOJIS_AND_STICKERS) // Enable required intents
                     .addEventListeners(new EventListener(), new CommandManager(this), emojiCache);

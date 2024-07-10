@@ -1,12 +1,13 @@
 package com.emojibot.events;
 
 import com.emojibot.Bot;
-import com.emojibot.commands.Command;
 import com.emojibot.commands.emoji.EmojiInfoCommand;
 import com.emojibot.commands.emoji.EmojifyCommand;
 import com.emojibot.commands.emoji.LinkCommand;
 import com.emojibot.commands.emoji.SearchCommand;
+import com.emojibot.commands.other.HelpCommand;
 import com.emojibot.commands.other.PingCommand;
+import com.emojibot.commands.utils.Command;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
@@ -49,11 +50,14 @@ public class CommandManager extends ListenerAdapter {
 
     public CommandManager(Bot bot) {
         createCommandMap(
-                new PingCommand(bot),
+                
                 new SearchCommand(bot),
                 new EmojifyCommand(bot),
                 new LinkCommand(bot),
-                new EmojiInfoCommand(bot)
+                new EmojiInfoCommand(bot),
+
+                new HelpCommand(bot),
+                new PingCommand(bot)
         );
     }
 
@@ -105,7 +109,9 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         // Register slash commands
-        registerCommands(event);
+        if(event.getGuild().getId().equals("368839796703100928") || event.getGuild().getId().equals("232918641866178560")) {
+            registerCommands(event);
+        }
     }
 
     /**
@@ -114,7 +120,9 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         // Register slash commands
-        registerCommands(event);
+        if(event.getGuild().getId().equals("368839796703100928") || event.getGuild().getId().equals("232918641866178560")) {
+            registerCommands(event);
+        }
     }
 
     /**
