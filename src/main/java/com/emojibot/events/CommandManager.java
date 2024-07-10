@@ -1,14 +1,18 @@
 package com.emojibot.events;
 
 import com.emojibot.Bot;
+import com.emojibot.BotConfig;
 import com.emojibot.commands.emoji.EmojiInfoCommand;
 import com.emojibot.commands.emoji.EmojifyCommand;
 import com.emojibot.commands.emoji.LinkCommand;
 import com.emojibot.commands.emoji.SearchCommand;
 import com.emojibot.commands.other.HelpCommand;
 import com.emojibot.commands.other.PingCommand;
+import com.emojibot.commands.staff.UploadCommand;
 import com.emojibot.commands.utils.Command;
 
+import club.minnced.discord.webhook.WebhookClient;
+import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
@@ -30,7 +34,7 @@ import java.util.*;
 public class CommandManager extends ListenerAdapter {
     public static final ArrayList<Command> commands = new ArrayList<>();
     public static final Map<String, Command> commandsMap = new HashMap<>();
-
+    private static final Dotenv config = Dotenv.configure().load();
 
     /*
     @Override
@@ -50,7 +54,9 @@ public class CommandManager extends ListenerAdapter {
 
     public CommandManager(Bot bot) {
         createCommandMap(
-                
+        
+                new UploadCommand(bot),
+
                 new SearchCommand(bot),
                 new EmojifyCommand(bot),
                 new LinkCommand(bot),
@@ -93,12 +99,24 @@ public class CommandManager extends ListenerAdapter {
             Role botRole = Objects.requireNonNull(event.getGuild()).getBotRole();
             if (botRole != null && cmd.botPermission != null) {
                 if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
-                    String text = "I need **" + cmd.botPermission.getName() + "** permission to execute that command.";
+                    String text = BotConfig.noEmoji() + " I need **" + cmd.botPermission.getName() + "** permission to execute that command.";
                     event.reply(text).setEphemeral(true).queue();
                     return;
                 }
             }
-            // Run command
+            try {
+                cmd.run(event);
+            } catch (Exception e) {
+                event.reply(BotConfig.noEmoji() + " Something went wrong, our team has been informed about this issue.").setEphemeral(true).queue();
+                e.printStackTrace();
+
+                try (WebhookClient client = WebhookClient.withUrl(config.get("URL_LOGS_WEBHOOK"))) {
+                    String errMessage = String.format(":warning: Unhandled exception with command %s at guild %s (%s), by user %s (%s):\n%s", event.getName(), event.getGuild().getName(), event.getGuild().getId(), event.getUser().getAsMention(), event.getUser().getId(), e.getMessage());
+                    client.send(errMessage);
+                } 
+                
+
+            }
             cmd.run(event);
         }
     }

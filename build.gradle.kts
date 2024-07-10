@@ -19,6 +19,10 @@ dependencies {
 
     // logging for jda
     implementation("ch.qos.logback:logback-classic:1.5.6")
+
+    // webhooks for logs
+    implementation("club.minnced:discord-webhooks:0.8.4")
+
 }
 
 tasks.test {

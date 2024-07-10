@@ -20,9 +20,9 @@ public class SearchCommand extends Command {
     public SearchCommand(Bot bot) {
         super(bot);
         this.name = "search";
-        this.description = "Search for specific emojis";
+        this.description = "Search for specific emojis by name";
 
-        OptionData emojiNameArgument = new OptionData(OptionType.STRING, "emojiname", "Emoji name to be searched", true, false);
+        OptionData emojiNameArgument = new OptionData(OptionType.STRING, "name", "Emoji name to be searched", true, false);
         this.args.add(emojiNameArgument);
 
         this.emojiCache = bot.getEmojiCache();
@@ -33,7 +33,7 @@ public class SearchCommand extends Command {
         // Defer the reply to avoid the 3 second timeout while searching, will use hooks to reply later
         event.deferReply().queue();
 
-        String emojiInput = EmojiInput.normalize(Objects.requireNonNull(event.getOption("emojiname")).getAsString());
+        String emojiInput = EmojiInput.normalize(Objects.requireNonNull(event.getOption("name")).getAsString());
 
         String emojiName = EmojiInput.extractEmojiName(emojiInput);
         
@@ -41,10 +41,10 @@ public class SearchCommand extends Command {
 
         // getEmojis returns a list of emojis that match the search query
         // that list will not be null, if no emojis are found, the list will be empty
-        if (!emojiList.isEmpty() && emojiList.size() > 15) {
+        if (!emojiList.isEmpty() && emojiList.size() > 25) {
             replyWithFoundEmojis(event, emojiList);
         } else {
-            // Try a fuzzy search if less than 15 emojis are found/not found
+            // Try a fuzzy search if less than 25 emojis are found/no emojis are found
             List<RichCustomEmoji> similarEmojis = searchSimilarEmojis(emojiName);
             if (similarEmojis.size() > emojiList.size()) {
                 // Reply with the similar emojis if they are more than the exact matches
@@ -55,7 +55,7 @@ public class SearchCommand extends Command {
                 replyWithFoundEmojis(event, emojiList);
             } else {
                 // No similar or exact matches found
-                event.getHook().sendMessage("I couldn't find similar or exact matches to your search. :(").queue();
+                event.getHook().sendMessage(BotConfig.noEmoji() + " I couldn't find similar or exact matches to your search. :(").queue();
             }
         }
     }

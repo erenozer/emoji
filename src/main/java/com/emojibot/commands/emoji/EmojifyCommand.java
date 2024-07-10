@@ -28,8 +28,8 @@ public class EmojifyCommand extends Command {
     @Override
     public void run(SlashCommandInteractionEvent event) {
         String text = Objects.requireNonNull(event.getOption("text")).getAsString();
-        if (text.length() > 50) {
-            event.reply("Your message should be less than 50 characters.").setEphemeral(true).queue();
+        if (text.length() > 40) {
+            event.reply("Your message should be less than 40 characters.").setEphemeral(true).queue();
             return;
         }
         text = turToEng(text); // Convert Turkish characters to English equivalents
