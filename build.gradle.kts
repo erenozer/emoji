@@ -12,7 +12,9 @@ repositories {
 
 dependencies {
     // JDA 5.0.0-beta.24
-    implementation("net.dv8tion:JDA:5.0.0-beta.24")
+    implementation("net.dv8tion:JDA:5.0.0-beta.24") {
+        exclude(module="opus-java")
+    }
 
     // dotenv for config
     implementation("io.github.cdimascio:java-dotenv:5.2.2")
