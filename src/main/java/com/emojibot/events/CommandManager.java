@@ -114,10 +114,7 @@ public class CommandManager extends ListenerAdapter {
                     String errMessage = String.format(":warning: Unhandled exception with command %s at guild %s (%s), by user %s (%s):\n%s", event.getName(), event.getGuild().getName(), event.getGuild().getId(), event.getUser().getAsMention(), event.getUser().getId(), e.getMessage());
                     client.send(errMessage);
                 } 
-                
-
             }
-            cmd.run(event);
         }
     }
 

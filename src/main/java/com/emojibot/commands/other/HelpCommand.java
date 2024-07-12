@@ -20,7 +20,7 @@ public class HelpCommand extends Command {
     @Override
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
-
+        
         MessageEmbed helpEmbed = new EmbedBuilder()
         .setAuthor("Hi there! I'm Emoji.", "https://discord.com/oauth2/authorize?client_id=414878659267133445", "https://cdn.discordapp.com/emojis/728286263429300274.webp?size=240&quality=lossless")
         .setDescription("[Add me to your server!](https://discord.com/oauth2/authorize?client_id=414878659267133445)\nYou can find new emojis, search for emojis, and more!\nStart typing **/** (slash) to use my commands.\n\n[Need some help? Click here.](https://discord.gg/U5v2csS)")
