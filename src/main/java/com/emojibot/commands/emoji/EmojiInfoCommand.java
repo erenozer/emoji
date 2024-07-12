@@ -38,7 +38,7 @@ public class EmojiInfoCommand extends Command {
         RichCustomEmoji emoji = event.getGuild().getEmojisByName(emojiName, false).stream().findFirst().orElse(null);
 
         if (emoji == null) {
-            event.getHook().sendMessage(BotConfig.noEmoji() + " Make sure the emoji you are looking for is from **this server**.").queue();
+            event.getHook().sendMessage(BotConfig.noEmoji() + " Make sure the emoji you are looking for is from **this server**.").setEphemeral(true).queue();
         } else {
             StringBuilder response = new StringBuilder();
             response.append("Information for the emoji `").append(emojiName).append("`:\n");

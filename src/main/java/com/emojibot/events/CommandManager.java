@@ -8,6 +8,7 @@ import com.emojibot.commands.emoji.LinkCommand;
 import com.emojibot.commands.emoji.SearchCommand;
 import com.emojibot.commands.other.HelpCommand;
 import com.emojibot.commands.other.PingCommand;
+import com.emojibot.commands.staff.DeleteCommand;
 import com.emojibot.commands.staff.UploadCommand;
 import com.emojibot.commands.utils.Command;
 
@@ -54,7 +55,7 @@ public class CommandManager extends ListenerAdapter {
 
     public CommandManager(Bot bot) {
         createCommandMap(
-        
+                new DeleteCommand(bot),
                 new UploadCommand(bot),
 
                 new SearchCommand(bot),

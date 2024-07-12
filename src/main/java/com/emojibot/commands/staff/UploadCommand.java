@@ -42,7 +42,7 @@ public class UploadCommand extends Command {
 
         // Check if either file, emoji, or URL is provided
         if ((fileOption == null && emojiOption == null && urlOption == null) || emojiName == null || emojiName.isEmpty()) {
-            event.getHook().sendMessage(BotConfig.noEmoji() + " Please provide an image file, **OR** an existing custom emoji, **OR** a direct image link to upload.").setEphemeral(true).queue();
+            event.getHook().sendMessage(BotConfig.noEmoji() + " Please provide an emoji file, **OR** an existing custom emoji, **OR** a direct emoji link to upload.").queue();
             return;
         }
 
@@ -50,7 +50,7 @@ public class UploadCommand extends Command {
             // Check if the file is an image
             var file = fileOption.getAsAttachment();
             if (!file.isImage()) {
-                event.getHook().sendMessage(BotConfig.noEmoji() + " The file provided is not an image. Please upload a valid image/gif file.").setEphemeral(true).queue();
+                event.getHook().sendMessage(BotConfig.noEmoji() + " The file provided is not an image. Please upload a valid image/gif file.").queue();
                 return;
             }
 
@@ -60,10 +60,10 @@ public class UploadCommand extends Command {
                     uploadEmoji(event, emojiName, inputStream);
                 } catch (IOException e) {
                     // Usually this one is triggered when something is wrong with the upload
-                    event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji\n- File is not bigger than 256kb in size").setEphemeral(true).queue();
+                    event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji\n- File is not bigger than 256kb in size").queue();
                 }
             }).exceptionally(error -> {
-                event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji\n- File is not bigger than 256kb in size").setEphemeral(true).queue();
+                event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji\n- File is not bigger than 256kb in size").queue();
                 return null;
             });
 
@@ -79,7 +79,7 @@ public class UploadCommand extends Command {
             try (InputStream inputStream = new URL(emojiUrl).openStream()) {
                 uploadEmoji(event, emojiName, inputStream);
             } catch (Exception e) {
-                event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji").setEphemeral(true).queue();
+                event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji").queue();
             }
 
         } else if (urlOption != null) {
@@ -88,7 +88,7 @@ public class UploadCommand extends Command {
             try (InputStream inputStream = new URL(emojiUrl).openStream()) {
                 uploadEmoji(event, emojiName, inputStream);
             } catch (Exception e) {
-                event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji").setEphemeral(true).queue();
+                event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji").queue();
             }
         }
     }
@@ -105,7 +105,7 @@ public class UploadCommand extends Command {
         event.getGuild().createEmoji(emojiName, icon).reason("Responsible " + event.getUser())
             .queue(
                 emoji -> event.getHook().sendMessage(BotConfig.yesEmoji() + " Emoji " + emoji.getAsMention() + " has been uploaded successfully!").queue(),
-                error -> event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji\n- File is not bigger than 256kb in size").setEphemeral(true).queue()
+                error -> event.getHook().sendMessage(BotConfig.noEmoji() + " Upload failed, please make sure that:\n- Server has a free slot to upload an emoji\n- File is not bigger than 256kb in size").queue()
             );
     }
 }
