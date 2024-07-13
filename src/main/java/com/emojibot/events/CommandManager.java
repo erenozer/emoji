@@ -5,6 +5,7 @@ import com.emojibot.BotConfig;
 import com.emojibot.commands.emoji.EmojiInfoCommand;
 import com.emojibot.commands.emoji.EmojifyCommand;
 import com.emojibot.commands.emoji.LinkCommand;
+import com.emojibot.commands.emoji.ListCommand;
 import com.emojibot.commands.emoji.SearchCommand;
 import com.emojibot.commands.other.HelpCommand;
 import com.emojibot.commands.other.PingCommand;
@@ -44,6 +45,7 @@ public class CommandManager extends ListenerAdapter {
                 new DeleteCommand(bot),
                 new UploadCommand(bot),
 
+                new ListCommand(bot),
                 new SearchCommand(bot),
                 new EmojifyCommand(bot),
                 new LinkCommand(bot),
