@@ -36,22 +36,8 @@ public class CommandManager extends ListenerAdapter {
     public static final ArrayList<Command> commands = new ArrayList<>();
     public static final Map<String, Command> commandsMap = new HashMap<>();
     private static final Dotenv config = Dotenv.configure().load();
+    private static final boolean USE_GLOBAL_COMMANDS = BotConfig.getUseGlobalCommands();
 
-    /*
-    @Override
-    public void onGuildReady(GuildReadyEvent event) {
-        List<CommandData> commands = new ArrayList<>();
-        commands.add(Commands.slash("ping", "Pong!"));
-
-        OptionData num1 = new OptionData(OptionType.INTEGER, "num1", "First number", true);
-        OptionData num2 = new OptionData(OptionType.INTEGER, "num2", "Second number", true);
-        commands.add(Commands.slash("subtract", "Subtract two numbers").addOptions(num1, num2));
-
-        event.getGuild().updateCommands().addCommands(commands).queue();
-
-    }
-
-    */
 
     public CommandManager(Bot bot) {
         createCommandMap(
@@ -63,8 +49,8 @@ public class CommandManager extends ListenerAdapter {
                 new LinkCommand(bot),
                 new EmojiInfoCommand(bot),
 
-                new HelpCommand(bot),
-                new PingCommand(bot)
+                new PingCommand(bot),
+                new HelpCommand(bot)
         );
     }
 
@@ -96,8 +82,8 @@ public class CommandManager extends ListenerAdapter {
         // Get command by name
         Command cmd = commandsMap.get(event.getName());
         if (cmd != null) {
-            // Check for bot permissions
-            Role botRole = Objects.requireNonNull(event.getGuild()).getBotRole();
+            // Check for required bot permissions
+            Role botRole = event.getGuild().getBotRole();
             if (botRole != null && cmd.botPermission != null) {
                 if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
                     String text = BotConfig.noEmoji() + " I need **" + cmd.botPermission.getName() + "** permission to execute that command.";
@@ -105,10 +91,19 @@ public class CommandManager extends ListenerAdapter {
                     return;
                 }
             }
+
+            // Try to run the command, if something fails, catch the exception and log it
             try {
                 cmd.run(event);
             } catch (Exception e) {
-                event.reply(BotConfig.noEmoji() + " Something went wrong, our team has been informed about this issue.").setEphemeral(true).queue();
+                // Send a message to the user that something went wrong
+                try {
+                    event.getHook().sendMessage(BotConfig.noEmoji() + " Something went wrong, our team has been informed about this issue.").setEphemeral(true).queue();
+                } catch (Exception e2) {
+                    event.reply(BotConfig.noEmoji() + " Something went wrong, our team has been informed about this issue.").setEphemeral(true).queue();
+
+                }
+
                 e.printStackTrace();
 
                 try (WebhookClient client = WebhookClient.withUrl(config.get("URL_LOGS_WEBHOOK"))) {
@@ -118,44 +113,36 @@ public class CommandManager extends ListenerAdapter {
             }
         }
     }
-
-    /**
-     * For registering GUILD slash commands (for testing purposes)
-     */
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
-        // Register slash commands
-        if(event.getGuild().getId().equals("368839796703100928") || event.getGuild().getId().equals("232918641866178560")) {
-            registerCommands(event);
+        if (!USE_GLOBAL_COMMANDS) {
+            registerGuildCommands(event);
+        } else {
+            clearGuildCommands(event);
         }
     }
 
-    /**
-     * For registering GUILD slash commands (for testing purposes)
-     */
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
-        // Register slash commands
-        if(event.getGuild().getId().equals("368839796703100928") || event.getGuild().getId().equals("232918641866178560")) {
-            registerCommands(event);
+        if (!USE_GLOBAL_COMMANDS) {
+            registerGuildCommands(event);
+        } else {
+            clearGuildCommands(event);
         }
     }
 
-    /**
-     * Global slash commands (can take up to an hour to update! - for production)
-     */
-
-    /*
     @Override
-    public void onReady(ReadyEvent event) {
-        event.getJDA().updateCommands().queue();
-        //event.getJDA().updateCommands().addCommands(unpackCommandData()).queue(succ -> {}, fail -> {});
+    public void onReady(@NotNull ReadyEvent event) {
+        if (USE_GLOBAL_COMMANDS) {
+            event.getJDA().updateCommands().addCommands(unpackCommandData()).queue();
+        }
     }
 
-     */
-
-
-    private void registerCommands(GenericGuildEvent event) {
+    private void registerGuildCommands(GenericGuildEvent event) {
         event.getGuild().updateCommands().addCommands(unpackCommandData()).queue(succ -> {}, fail -> {});
+    }
+
+    private void clearGuildCommands(GenericGuildEvent event) {
+        event.getGuild().updateCommands().queue(succ -> {}, fail -> {});
     }
 }

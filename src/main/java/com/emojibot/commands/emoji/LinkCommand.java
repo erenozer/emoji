@@ -43,7 +43,7 @@ public class LinkCommand extends Command {
                     String.format("https://cdn.discordapp.com/emojis/%s.gif?&quality=lossless", emojiId) :
                     String.format("https://cdn.discordapp.com/emojis/%s.png?quality=lossless", emojiId);
 
-            event.reply(BotConfig.yesEmoji() + " Link of the emoji \"" + emojiName + "\":\n" + url).queue();
+            event.reply(BotConfig.yesEmoji() + " Link of the emoji `" + emojiName + "`:\n" + url).queue();
 
         } else if (!cachedEmojis.isEmpty()) {
             // Emoji was found using the name

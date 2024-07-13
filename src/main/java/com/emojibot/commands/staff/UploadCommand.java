@@ -46,6 +46,8 @@ public class UploadCommand extends Command {
             return;
         }
 
+        // If more than one option is provided, prioritize file > emoji > URL instead of throwing an error 
+
         if (fileOption != null) {
             // Check if the file is an image
             var file = fileOption.getAsAttachment();

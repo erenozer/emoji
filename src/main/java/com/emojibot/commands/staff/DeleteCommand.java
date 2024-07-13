@@ -27,14 +27,14 @@ public class DeleteCommand extends Command {
 
     @Override
     public void run(SlashCommandInteractionEvent event) {
-        event.deferReply(true).queue(); 
+        event.deferReply().queue(); 
 
         var emojiOption = event.getOption("emoji");
         var nameOption = event.getOption("name");
 
         // Check if either emoji or name is provided
         if (emojiOption == null && nameOption == null) {
-            event.getHook().sendMessage(BotConfig.noEmoji() + " Please provide an emoji **OR** the name of the emoji to delete.").setEphemeral(true).queue();
+            event.getHook().sendMessage(BotConfig.noEmoji() + " Please provide an emoji directly **OR** name of it to delete.").setEphemeral(true).queue();
             return;
         }
 
@@ -47,7 +47,6 @@ public class DeleteCommand extends Command {
             String emojiId = EmojiInput.extractEmojiId(emojiInput);
             if (emojiId != null) { // Custom emoji format
                 emote = guild.getEmojiById(emojiId);
-                System.out.println("Emoji ID: " + emojiId);
             }
         }
 
@@ -55,19 +54,20 @@ public class DeleteCommand extends Command {
         if (emote == null && nameOption != null) {
             String emojiName = EmojiInput.normalize(nameOption.getAsString());
             emote = guild.getEmojisByName(emojiName, false).stream().findFirst().orElse(null);
-            System.out.println("name ile");
         }
 
-        // Check if the emoji exists
+        // Emoji not found using both methods
         if (emote == null) {
-            event.getHook().sendMessage(BotConfig.noEmoji() + " The emoji provided does not exist in this server.").setEphemeral(true).queue();
+            event.getHook().sendMessage(BotConfig.noEmoji() + " The emoji provided does not exist in this server.").queue();
             return;
         }
 
+        String emoteName = emote.getName();
+
         // Delete the emoji
-        emote.delete().queue(
-                success -> event.getHook().sendMessage(BotConfig.yesEmoji() + " Emoji has been deleted.").setEphemeral(true).queue(),
-                error -> event.getHook().sendMessage(BotConfig.noEmoji() + " Failed to delete the emoji.").setEphemeral(true).queue()
+        emote.delete().reason("Responsible " + event.getUser()).queue(
+                success -> event.getHook().sendMessage(BotConfig.yesEmoji() + " Emoji \"" + emoteName + "\" has been deleted.").queue(),
+                error -> event.getHook().sendMessage(BotConfig.noEmoji() + " Failed to delete the emoji.").queue()
         );
     }
 }
