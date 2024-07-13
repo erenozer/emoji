@@ -1,7 +1,8 @@
 package com.emojibot.commands.other;
 
 import com.emojibot.Bot;
-import com.emojibot.commands.Command;
+import com.emojibot.commands.utils.Command;
+
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 public class PingCommand extends Command {

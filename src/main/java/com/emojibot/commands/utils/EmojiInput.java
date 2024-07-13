@@ -25,4 +25,20 @@ public class EmojiInput {
             return emojiInput;
         }
     }
+
+    public static String extractEmojiId(String emojiInput) {
+        Matcher matcher = EMOJI_PATTERN.matcher(emojiInput);
+
+        if (matcher.matches()) {
+            // Full emoji format provided: <name : ID>, return the name part 
+            return matcher.group(2);
+        } else {
+            // Only emoji name provided
+            return null;
+        }
+    }
+
+    public static String normalize(String input) {
+        return input.trim().replaceAll("\\s+", "");
+    }
 }

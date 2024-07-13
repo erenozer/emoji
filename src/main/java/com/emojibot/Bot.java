@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import okhttp3.Cache;
 
 public class Bot {
     private static final Dotenv config = Dotenv.configure().load();
@@ -34,11 +36,15 @@ public class Bot {
             int numberOfShards = (int) Math.ceil((double) totalGuilds / maxGuildsPerShard);
             System.out.println("Total shard count: " + numberOfShards);
             */
+            
+            // Blue emoji color - 0xa7cfe2
 
-            DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(getToken())
-                    .setStatus(OnlineStatus.ONLINE)
-                    .setActivity(Activity.playing("hey!"))
+            DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createLight(getToken())
+                    .setStatus(OnlineStatus.IDLE)
+                    .setActivity(Activity.watching("/start to get started with Emoji!"))
                     .setMemberCachePolicy(MemberCachePolicy.NONE)
+                    .enableCache(CacheFlag.EMOJI, CacheFlag.ROLE_TAGS)
+                    .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.VOICE_STATE)
                     .enableIntents(GatewayIntent.GUILD_EMOJIS_AND_STICKERS) // Enable required intents
                     .addEventListeners(new EventListener(), new CommandManager(this), emojiCache);
 

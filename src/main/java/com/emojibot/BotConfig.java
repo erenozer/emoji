@@ -51,5 +51,8 @@ public class BotConfig {
     public static String infoEmoji() {
         return properties.getProperty("INFO_EMOJI");
     }
-    
+ 
+    public static boolean getUseGlobalCommands() {
+        return Boolean.parseBoolean(properties.getProperty("USE_GLOBAL_COMMANDS"));
+    }
 }

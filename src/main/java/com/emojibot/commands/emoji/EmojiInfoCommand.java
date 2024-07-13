@@ -1,22 +1,23 @@
 package com.emojibot.commands.emoji;
 
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.Command;
+import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.Bot;
+import com.emojibot.BotConfig;
+
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import java.util.List;
+
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 
-// TODO: embed manager with nice emojis, implement the emoji info command with it
-
-
 public class EmojiInfoCommand extends Command {
-    private final EmojiCache emojiCache;
-
     public EmojiInfoCommand(Bot bot) {
         super(bot);
         this.name = "info";
@@ -24,38 +25,43 @@ public class EmojiInfoCommand extends Command {
 
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "emoji", "Emoji to get it's info", true, false);
         this.args.add(emojiNameArgument);
-
-        this.emojiCache = bot.getEmojiCache();
     }
 
     @Override
     public void run(SlashCommandInteractionEvent event) {
-    String emojiName = normalize(Objects.requireNonNull(event.getOption("emoji")).getAsString());
+        // Using embeds, defer the reply to use the hook later
+        event.deferReply().queue();
 
-    List<RichCustomEmoji> emojiList = emojiCache.getEmojis(emojiName);
+        String emojiInput = EmojiInput.normalize(Objects.requireNonNull(event.getOption("emoji")).getAsString());
+        String emojiName = EmojiInput.extractEmojiName(emojiInput);
 
-        if (emojiList.isEmpty()) {
-            event.reply("No custom emoji found with that name.").queue();
+        RichCustomEmoji emoji = event.getGuild().getEmojisByName(emojiName, false).stream().findFirst().orElse(null);
+
+        if (emoji == null) {
+            event.getHook().sendMessage(BotConfig.noEmoji() + " Make sure the emoji you are looking for is from **this server**.").setEphemeral(true).queue();
         } else {
             StringBuilder response = new StringBuilder();
             response.append("Information for the emoji `").append(emojiName).append("`:\n");
 
-            for (RichCustomEmoji emoji : emojiList) {
-                response.append("Name: ").append(emoji.getName()).append("\n");
-                response.append("ID: ").append(emoji.getId()).append("\n");
-                response.append("Creation date: ").append(emoji.getTimeCreated().toLocalDate()).append("\n");
-                response.append("Is Animated?: ").append(emoji.isAnimated()).append("\n");
-                response.append("Is managed?: ").append(emoji.isManaged()).append("\n");
-                response.append("URL: ").append(emoji.getImageUrl()).append("\n\n");
-            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+            String formattedDate = emoji.getTimeCreated().format(formatter);
 
-            event.reply(response.toString()).queue();
+            MessageEmbed infoEmbed = new EmbedBuilder()
+                    .setTitle("Emoji Information")
+                    .setColor(BotConfig.getGeneralEmbedColor())
+                    //.setDescription("Information for the emoji `" + emojiName + "`:")
+                    .addField("ID", emoji.getId(), true)
+                    .addField("Name", emoji.getName(), true)
+                    .addField("Date Added", formattedDate, true)
+                    .addField("Animated?", emoji.isAnimated() ? "Yes" : "No", true)
+                    .addField("Managed?", emoji.isManaged() ? "Yes" : "No", true)
+                    .addField("Usage", "`<"+emoji.getName()+":"+emoji.getId()+">`", true)
+                    .setThumbnail(emoji.getImageUrl())
+                    .build();
+
+            event.getHook().sendMessageEmbeds(infoEmbed).queue();
+
         }
-    }
-
-
-    private String normalize(String input) {
-        return input.trim().toLowerCase().replaceAll("\\s+", "");
     }
 
 }

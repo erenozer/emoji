@@ -8,7 +8,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import club.minnced.discord.webhook.WebhookClient;
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class EventListener extends ListenerAdapter {
+    private static final Dotenv config = Dotenv.configure().load();
+    private static final WebhookClient shardHook = WebhookClient.withUrl(config.get("URL_SHARDS_WEBHOOK"));
+
+
     /**
      * Logs when the bot is ready
      * @param event
@@ -18,6 +25,7 @@ public class EventListener extends ListenerAdapter {
         int shardId = event.getJDA().getShardInfo().getShardId();
         Logger logger = LoggerFactory.getLogger(generateEventName(event.getState().name()));
         logger.info("Logged in as {}", event.getJDA().getSelfUser().getName());
+        shardHook.send(String.format("<:oveonline:565332757706702849> Shard **%d** is ready! (%s)", shardId, event.getJDA().getSelfUser().getName()));
     }
 
     /**
@@ -29,6 +37,7 @@ public class EventListener extends ListenerAdapter {
         int shardId = event.getJDA().getShardInfo().getShardId();
         Logger logger = LoggerFactory.getLogger(generateEventName(event.getState().name()));
         logger.info("Attempting to reconnect...");
+        shardHook.send(String.format("<:oveidle:565330022823624714> Shard **%d** is attempting to reconnect... (%s)", shardId, event.getJDA().getSelfUser().getName()));
     }
 
     /**
@@ -40,6 +49,7 @@ public class EventListener extends ListenerAdapter {
         int shardId = event.getJDA().getShardInfo().getShardId();
         Logger logger = LoggerFactory.getLogger(generateEventName(event.getState().name()));
         logger.info("Invalidated session completely.");
+        shardHook.send(String.format("<:oveoffline:565330022823624714> Shard **%d** has been invalidated completely. (%s) :warning:", shardId, event.getJDA().getSelfUser().getName()));
     }
 
     /**
@@ -51,6 +61,8 @@ public class EventListener extends ListenerAdapter {
         int shardId = event.getJDA().getShardInfo().getShardId();
         Logger logger = LoggerFactory.getLogger(generateEventName(event.getState().name()));
         logger.warn("Disconnected from the gateway, code: {}", event.getCloseCode());
+        shardHook.send(String.format("<:oveoffline:565330022823624714> Shard **%d** has been disconnected from the gateway. (%s)", shardId, event.getJDA().getSelfUser().getName()));
+
     }
 
     /**
