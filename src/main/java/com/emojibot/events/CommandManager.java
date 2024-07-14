@@ -29,17 +29,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class CommandManager extends ListenerAdapter {
+    // Commands list
     public static final ArrayList<Command> commands = new ArrayList<>();
+    // Commands map for quick access
     public static final Map<String, Command> commandsMap = new HashMap<>();
+    // Config for webhook URLs
     private static final Dotenv config = Dotenv.configure().load();
+    // Flag to use global commands or guild command
     private static final boolean USE_GLOBAL_COMMANDS = BotConfig.getUseGlobalCommands();
     // Cooldown manager
     private final CooldownManager cooldownManager = new CooldownManager();
 
     public CommandManager(Bot bot) {
+        // Register all the commands
         createCommandMap(
                 new DeleteCommand(bot),
                 new UploadCommand(bot),
+                new RenameCommand(bot),
 
                 new ListCommand(bot),
                 new SearchCommand(bot),
@@ -52,10 +58,10 @@ public class CommandManager extends ListenerAdapter {
         );
     }
 
-    private void createCommandMap(Command ...cmdList) {
-        for(Command cmd : cmdList) {
-            commandsMap.put(cmd.name, cmd);
-            commands.add(cmd);
+    private void createCommandMap(Command ...commandList) {
+        for(Command command : commandList) {
+            commandsMap.put(command.name, command);
+            commands.add(command);
         }
     }
 
@@ -78,31 +84,31 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         // Get command by name
-        Command cmd = commandsMap.get(event.getName());
-        if (cmd != null) {
+        Command command = commandsMap.get(event.getName());
+        if (command != null) {
             String userId = event.getUser().getId();
             // Check cooldown
-            if (cmd.cooldownDuration != null && cmd.cooldownDuration > 0) {
-                if (cooldownManager.isOnCooldown(userId, cmd.name, cmd.cooldownDuration)) {
-                    if (!cooldownManager.hasBeenWarned(userId, cmd.name)) {
-                        long remainingCooldown = cooldownManager.getRemainingCooldown(userId, cmd.name, cmd.cooldownDuration);
+            if (command.cooldownDuration != null && command.cooldownDuration > 0) {
+                if (cooldownManager.isOnCooldown(userId, command.name, command.cooldownDuration)) {
+                    if (!cooldownManager.hasBeenWarned(userId, command.name)) {
+                        long remainingCooldown = cooldownManager.getRemainingCooldown(userId, command.name, command.cooldownDuration);
                         event.reply(String.format(":turtle: You are on **cooldown**! Please wait %d second(s) before using this command again, further attemps will be ignored.", remainingCooldown))
                                 .setEphemeral(true)
                                 .queue();
-                        cooldownManager.warnUser(userId, cmd.name);
+                        cooldownManager.warnUser(userId, command.name);
                     }
                     // Ignore attemps from already warned users
                     return;
                 } else {
-                    cooldownManager.setCooldown(userId, cmd.name);
+                    cooldownManager.setCooldown(userId, command.name);
                 }
             }
 
             // Check for required bot permissions
             Role botRole = event.getGuild().getBotRole();
-            if (botRole != null && cmd.botPermission != null) {
-                if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
-                    String text = BotConfig.noEmoji() + " I need **" + cmd.botPermission.getName() + "** permission to execute that command.";
+            if (botRole != null && command.botPermission != null) {
+                if (!botRole.hasPermission(command.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
+                    String text = BotConfig.noEmoji() + " I need **" + command.botPermission.getName() + "** permission to execute that command.";
                     event.reply(text).setEphemeral(true).queue();
                     return;
                 }
@@ -110,7 +116,7 @@ public class CommandManager extends ListenerAdapter {
 
             // Try to run the command, if something fails, catch the exception and log it
             try {
-                cmd.run(event);
+                command.run(event);
             } catch (Exception e) {
                 // Send a message to the user that something went wrong
                 try {
