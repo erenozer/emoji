@@ -21,6 +21,7 @@ public class LinkCommand extends Command {
         super(bot);
         this.name = "link";
         this.description = "Get the link of an emoji";
+        this.cooldownDuration = 2;
 
         OptionData emojiArgument = new OptionData(OptionType.STRING, "emoji", "Emoji to get the link", true);
         this.args.add(emojiArgument);

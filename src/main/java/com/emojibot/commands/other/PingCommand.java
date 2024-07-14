@@ -11,7 +11,7 @@ public class PingCommand extends Command {
         super(bot);
         this.name = "ping";
         this.description = "Pong!";
-
+        this.cooldownDuration = 6;
     }
 
     @Override

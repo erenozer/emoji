@@ -2,16 +2,12 @@ package com.emojibot.events;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.emoji.EmojiInfoCommand;
-import com.emojibot.commands.emoji.EmojifyCommand;
-import com.emojibot.commands.emoji.LinkCommand;
-import com.emojibot.commands.emoji.SearchCommand;
-import com.emojibot.commands.other.HelpCommand;
-import com.emojibot.commands.other.PingCommand;
-import com.emojibot.commands.staff.DeleteCommand;
-import com.emojibot.commands.staff.UploadCommand;
+import com.emojibot.commands.emoji.*;
+import com.emojibot.commands.other.*;
+import com.emojibot.commands.staff.*;
 import com.emojibot.commands.utils.Command;
 
+import com.emojibot.events.CooldownManager;
 import club.minnced.discord.webhook.WebhookClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.Permission;
@@ -37,13 +33,15 @@ public class CommandManager extends ListenerAdapter {
     public static final Map<String, Command> commandsMap = new HashMap<>();
     private static final Dotenv config = Dotenv.configure().load();
     private static final boolean USE_GLOBAL_COMMANDS = BotConfig.getUseGlobalCommands();
-
+    // Cooldown manager
+    private final CooldownManager cooldownManager = new CooldownManager();
 
     public CommandManager(Bot bot) {
         createCommandMap(
                 new DeleteCommand(bot),
                 new UploadCommand(bot),
 
+                new ListCommand(bot),
                 new SearchCommand(bot),
                 new EmojifyCommand(bot),
                 new LinkCommand(bot),
@@ -82,6 +80,24 @@ public class CommandManager extends ListenerAdapter {
         // Get command by name
         Command cmd = commandsMap.get(event.getName());
         if (cmd != null) {
+            String userId = event.getUser().getId();
+            // Check cooldown
+            if (cmd.cooldownDuration != null && cmd.cooldownDuration > 0) {
+                if (cooldownManager.isOnCooldown(userId, cmd.name, cmd.cooldownDuration)) {
+                    if (!cooldownManager.hasBeenWarned(userId, cmd.name)) {
+                        long remainingCooldown = cooldownManager.getRemainingCooldown(userId, cmd.name, cmd.cooldownDuration);
+                        event.reply(String.format(":turtle: You are on **cooldown**! Please wait %d second(s) before using this command again, further attemps will be ignored.", remainingCooldown))
+                                .setEphemeral(true)
+                                .queue();
+                        cooldownManager.warnUser(userId, cmd.name);
+                    }
+                    // Ignore attemps from already warned users
+                    return;
+                } else {
+                    cooldownManager.setCooldown(userId, cmd.name);
+                }
+            }
+
             // Check for required bot permissions
             Role botRole = event.getGuild().getBotRole();
             if (botRole != null && cmd.botPermission != null) {

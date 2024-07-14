@@ -21,6 +21,7 @@ public class SearchCommand extends Command {
         super(bot);
         this.name = "search";
         this.description = "Search for specific emojis by name";
+        this.cooldownDuration = 6;
 
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "name", "Emoji name to be searched", true, false);
         this.args.add(emojiNameArgument);

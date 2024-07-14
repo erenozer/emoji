@@ -1,5 +1,6 @@
 package com.emojibot;
 
+import com.emojibot.events.ButtonListener;
 import com.emojibot.events.CommandManager;
 import com.emojibot.events.EventListener;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -11,7 +12,6 @@ import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import okhttp3.Cache;
 
 public class Bot {
     private static final Dotenv config = Dotenv.configure().load();
@@ -46,7 +46,7 @@ public class Bot {
                     .enableCache(CacheFlag.EMOJI, CacheFlag.ROLE_TAGS)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.VOICE_STATE)
                     .enableIntents(GatewayIntent.GUILD_EMOJIS_AND_STICKERS) // Enable required intents
-                    .addEventListeners(new EventListener(), new CommandManager(this), emojiCache);
+                    .addEventListeners(new EventListener(), new CommandManager(this), emojiCache, new ButtonListener(this));
 
             shardManager = builder.build();
 

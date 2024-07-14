@@ -16,6 +16,7 @@ public class DeleteCommand extends Command {
         super(bot);
         this.name = "delete";
         this.description = "Delete an emoji from your server, select either by emoji or name";
+        this.cooldownDuration = 4;
 
         // Define options
         this.args.add(new OptionData(OptionType.STRING, "emoji", "Emoji to be deleted", false));
@@ -66,7 +67,7 @@ public class DeleteCommand extends Command {
 
         // Delete the emoji
         emote.delete().reason("Responsible " + event.getUser()).queue(
-                success -> event.getHook().sendMessage(BotConfig.yesEmoji() + " Emoji \"" + emoteName + "\" has been deleted.").queue(),
+                success -> event.getHook().sendMessage(String.format("%s Emoji \"%s\" has been deleted.", BotConfig.yesEmoji(), emoteName)).queue(),
                 error -> event.getHook().sendMessage(BotConfig.noEmoji() + " Failed to delete the emoji.").queue()
         );
     }
