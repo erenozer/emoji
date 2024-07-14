@@ -2,14 +2,12 @@ package com.emojibot.commands.emoji;
 
 import java.awt.Color;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
@@ -17,7 +15,6 @@ import com.emojibot.commands.utils.Command;
 import com.emojibot.events.ButtonListener;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
@@ -36,7 +33,6 @@ public class ListCommand extends Command {
         private int totalPages;
         private int pageSize;
         private List<RichCustomEmoji> emojis;
-        private Instant creationTime;
 
         public CurrentValues(int currentPage, int totalPages, int pageSize, List<RichCustomEmoji> emojis) {
             this.currentPage = currentPage;
@@ -59,10 +55,6 @@ public class ListCommand extends Command {
 
         public List<RichCustomEmoji> getEmojis() {
             return emojis;
-        }
-
-        public Instant getCreationTime() {
-            return creationTime;
         }
 
         public void setCurrentPage(int currentPage) {

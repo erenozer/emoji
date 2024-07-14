@@ -1,6 +1,5 @@
 package com.emojibot.commands.emoji;
 
-import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.Bot;
