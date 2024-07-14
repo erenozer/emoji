@@ -17,6 +17,7 @@ public abstract class Command {
     public List<SubcommandData> subCommands;
     public Permission permission; // Permission user needs to execute this command
     public Permission botPermission; // Permission bot needs to execute this command
+    public Integer cooldownDuration;
 
     public Command(Bot bot) {
         this.bot = bot;

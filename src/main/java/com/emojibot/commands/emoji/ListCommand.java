@@ -66,10 +66,12 @@ public class ListCommand extends Command {
     private static final Map<String, CurrentValues> currentValues = new HashMap<>();
     private static final Timer timer = new Timer(); // Timer for session expiration
 
+
     public ListCommand(Bot bot) {
         super(bot);
         this.name = "list";
         this.description = "Lists all emojis in the server with pages";
+        this.cooldownDuration = 30;
     }
 
     @Override

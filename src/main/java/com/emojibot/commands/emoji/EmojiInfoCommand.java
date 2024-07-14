@@ -21,6 +21,7 @@ public class EmojiInfoCommand extends Command {
         super(bot);
         this.name = "info";
         this.description = "Get information about an emoji";
+        this.cooldownDuration = 3;
 
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "emoji", "Emoji to get it's info", true, false);
         this.args.add(emojiNameArgument);

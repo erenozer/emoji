@@ -19,6 +19,7 @@ public class EmojifyCommand extends Command {
         super(bot);
         this.name = "emojify";
         this.description = "Emojify your message";
+        this.cooldownDuration = 8;
 
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "text", "Text to be emojified", true);
         this.args.add(emojiNameArgument);

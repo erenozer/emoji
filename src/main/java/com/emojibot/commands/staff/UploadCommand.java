@@ -20,6 +20,7 @@ public class UploadCommand extends Command {
         super(bot);
         this.name = "upload";
         this.description = "Upload an emoji to your server";
+        this.cooldownDuration = 4;
 
         // Define options
         this.args.add(new OptionData(OptionType.STRING, "name", "The name for the new emoji", true));

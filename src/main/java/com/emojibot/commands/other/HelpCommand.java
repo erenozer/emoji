@@ -19,7 +19,8 @@ public class HelpCommand extends Command {
         super(bot);
         this.name = "start";
         this.description = "Learn about the commands available to you!";
-
+        this.cooldownDuration = 3;
+    
     }
 
     @Override
