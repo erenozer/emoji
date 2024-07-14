@@ -1,5 +1,6 @@
 package com.emojibot.commands.emoji;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.emojibot.Bot;
@@ -7,11 +8,14 @@ import com.emojibot.BotConfig;
 import com.emojibot.commands.utils.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Button;
-import net.dv8tion.jda.api.interactions.components.ButtonStyle;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+
 
 public class ListCommand extends Command {
 
@@ -26,10 +30,11 @@ public class ListCommand extends Command {
         event.deferReply().queue();
 
         List<RichCustomEmoji> emojis = event.getGuild().getEmojiCache().asList();
-        int pageSize = 10;
-        int totalPages = (int) Math.ceil((double) emojis.size() / pageSize);
 
-        showPage(event, emojis, 1, totalPages);
+        int pageSize = 10;
+        int totalPages = (int) Math.ceil((double) emojis.size() / pageSize); // Calculate total pages
+
+        showPage(event, emojis, 1, totalPages); // Show the first page initially
     }
 
     private void showPage(SlashCommandInteractionEvent event, List<RichCustomEmoji> emojis, int currentPage, int totalPages) {
@@ -47,21 +52,28 @@ public class ListCommand extends Command {
                 .setColor(BotConfig.getGeneralEmbedColor())
                 .build();
 
-        ActionRow buttons = ActionRow.of(
-                Button.of(ButtonStyle.PRIMARY, "previous", "Previous Page",
-                        (previousPage) -> showPage(event, emojis, currentPage - 1, totalPages)),
-                Button.of(ButtonStyle.PRIMARY, "next", "Next Page",
-                        (nextPage) -> showPage(event, emojis, currentPage + 1, totalPages))
-        );
+                
+        // Create buttons based on current page
+        List<ItemComponent> buttons = new ArrayList<>();
+        if (totalPages > 1) {
+            Button previousButton = Button.of(ButtonStyle.PRIMARY, "previous", "Previous Page", Emoji.fromFormatted("⬅"));
+            Button nextButton = Button.of(ButtonStyle.PRIMARY, "next", "Next Page", Emoji.fromFormatted("➡"));
+            
+            buttons.add(previousButton);
+            buttons.add(nextButton);
+            
 
-        if (currentPage == 1) {
-            buttons = ActionRow.of(Button.of(ButtonStyle.PRIMARY, "next", "Next Page",
-                    (nextPage) -> showPage(event, emojis, currentPage + 1, totalPages)));
-        } else if (currentPage == totalPages) {
-            buttons = ActionRow.of(Button.of(ButtonStyle.PRIMARY, "previous", "Previous Page",
-                    (previousPage) -> showPage(event, emojis, currentPage - 1, totalPages)));
+            if (currentPage == 1) {
+                //buttons.remove(previousButton);
+            } else if (currentPage == totalPages) {
+                buttons.remove(nextButton); 
+            }
         }
 
-        event.getHook().sendMessageEmbeds(embed).setActionRows(buttons).queue();
+        // Send the embed with buttons
+        event.getHook().sendMessageEmbeds(embed).setActionRow(buttons).queue();
     }
+
+    
+    
 }
