@@ -47,6 +47,7 @@ public class CommandManager extends ListenerAdapter {
                 new UploadCommand(bot),
                 new RenameCommand(bot),
 
+                new JumboCommand(bot),
                 new ListCommand(bot),
                 new SearchCommand(bot),
                 new EmojifyCommand(bot),
@@ -83,39 +84,46 @@ public class CommandManager extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        // Get command by name
+        // Get the used command
         Command command = commandsMap.get(event.getName());
         if (command != null) {
+            // Get user and check for cooldown
             String userId = event.getUser().getId();
-            // Check cooldown
+
+            // Check if there is cooldown set for the command
             if (command.cooldownDuration != null && command.cooldownDuration > 0) {
+                // Check if user is on cooldown 
                 if (cooldownManager.isOnCooldown(userId, command.name, command.cooldownDuration)) {
+                    // Check if user is on cooldown & already been warned
                     if (!cooldownManager.hasBeenWarned(userId, command.name)) {
+                        // If not already warned, inform them about the cooldown and put them on warned users list
                         long remainingCooldown = cooldownManager.getRemainingCooldown(userId, command.name, command.cooldownDuration);
                         event.reply(String.format(":turtle: You are on **cooldown**! Please wait %d second(s) before using this command again, further attemps will be ignored.", remainingCooldown))
                                 .setEphemeral(true)
                                 .queue();
                         cooldownManager.warnUser(userId, command.name);
                     }
+
                     // Ignore attemps from already warned users
                     return;
                 } else {
+                    // User is NOT on cooldown, put them in cooldown
                     cooldownManager.setCooldown(userId, command.name);
                 }
             }
 
-            // Check for required bot permissions
+            // Check for bot's permissiıons
             Role botRole = event.getGuild().getBotRole();
             if (botRole != null && command.botPermission != null) {
                 if (!botRole.hasPermission(command.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
-                    String text = BotConfig.noEmoji() + " I need **" + command.botPermission.getName() + "** permission to execute that command.";
-                    event.reply(text).setEphemeral(true).queue();
+                    event.reply(String.format("%s I need **%s** permission to execute that command.", BotConfig.noEmoji(), command.botPermission.getName())).setEphemeral(true).queue();
                     return;
                 }
             }
 
             // Try to run the command, if something fails, catch the exception and log it
             try {
+                // Run the command
                 command.run(event);
             } catch (Exception e) {
                 // Send a message to the user that something went wrong
@@ -123,13 +131,14 @@ public class CommandManager extends ListenerAdapter {
                     event.getHook().sendMessage(BotConfig.noEmoji() + " Something went wrong, our team has been informed about this issue.").setEphemeral(true).queue();
                 } catch (Exception e2) {
                     event.reply(BotConfig.noEmoji() + " Something went wrong, our team has been informed about this issue.").setEphemeral(true).queue();
-
                 }
 
+                // Also print it to the console
                 e.printStackTrace();
 
+                // Log the exception using the webhook
                 try (WebhookClient client = WebhookClient.withUrl(config.get("URL_LOGS_WEBHOOK"))) {
-                    String errMessage = String.format(":warning: Unhandled exception with command %s at guild %s (%s), by user %s (%s):\n%s", event.getName(), event.getGuild().getName(), event.getGuild().getId(), event.getUser().getAsMention(), event.getUser().getId(), e.getMessage());
+                    String errMessage = String.format(":warning: Unhandled exception with command %s at guild %s (%s), by user %s (%s):\n```java%s```", event.getName(), event.getGuild().getName(), event.getGuild().getId(), event.getUser().getAsMention(), event.getUser().getId(), e.getMessage());
                     client.send(errMessage);
                 } 
             }
