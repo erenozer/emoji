@@ -1,8 +1,14 @@
 package com.emojibot.commands.emoji;
 
+import java.awt.Color;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import com.emojibot.Bot;
@@ -11,6 +17,7 @@ import com.emojibot.commands.utils.Command;
 import com.emojibot.events.ButtonListener;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
@@ -29,6 +36,7 @@ public class ListCommand extends Command {
         private int totalPages;
         private int pageSize;
         private List<RichCustomEmoji> emojis;
+        private Instant creationTime;
 
         public CurrentValues(int currentPage, int totalPages, int pageSize, List<RichCustomEmoji> emojis) {
             this.currentPage = currentPage;
@@ -53,18 +61,23 @@ public class ListCommand extends Command {
             return emojis;
         }
 
+        public Instant getCreationTime() {
+            return creationTime;
+        }
+
         public void setCurrentPage(int currentPage) {
             this.currentPage = currentPage;
         }
     }
 
     // Holds UUID:USERID as key and Current Page as value
-    private static HashMap<String, CurrentValues> currentValues = new HashMap<>();
+    private static final Map<String, CurrentValues> currentValues = new HashMap<>();
+    private static final Timer timer = new Timer(); // Timer for session expiration
 
     public ListCommand(Bot bot) {
         super(bot);
         this.name = "list";
-        this.description = "Lists all emojis in the server with pagination";
+        this.description = "Lists all emojis in the server with pages";
     }
 
     @Override
@@ -79,6 +92,14 @@ public class ListCommand extends Command {
         currentValues.put(sessionId, new CurrentValues(1, totalPages, pageSize, emojis));
 
         showPage(event, emojis, 1, totalPages, pageSize, sessionId); // Show the first page initially
+
+        // Schedule expiration check after 2 minutes
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                expireSession(sessionId, event);
+            }
+        }, Duration.ofMinutes(3).toMillis());
     }
 
     private static void showPage(SlashCommandInteractionEvent event, List<RichCustomEmoji> emojis, int currentPage, int totalPages, int pageSize, String sessionId) {
@@ -99,12 +120,14 @@ public class ListCommand extends Command {
         for (int i = startIndex; i < endIndex; i++) {
             emojiString.append(emojis.get(i).getAsMention()).append(" ");
         }
-
+        /* 
         MessageEmbed embed = new EmbedBuilder()
                 .setTitle("Emoji List - Page " + currentPage + "/" + totalPages)
                 .setDescription(emojiString.toString())
                 .setColor(BotConfig.getGeneralEmbedColor())
                 .build();
+        */
+
 
         // Create buttons based on current page
         List<ItemComponent> buttons = new ArrayList<>();
@@ -112,16 +135,17 @@ public class ListCommand extends Command {
             String prevButtonId = sessionId + ":list:previous";
             String nextButtonId = sessionId + ":list:next";
 
+            Button currentPageButton = Button.of(ButtonStyle.SECONDARY, "disabled", String.format("Page %d/%d", currentPage, totalPages), Emoji.fromFormatted(BotConfig.infoEmoji())).withDisabled(true);
             Button previousButton = Button.of(ButtonStyle.PRIMARY, prevButtonId, "Previous Page", Emoji.fromUnicode("⬅")).withDisabled(currentPage == 1);
             Button nextButton = Button.of(ButtonStyle.PRIMARY, nextButtonId, "Next Page", Emoji.fromUnicode("➡")).withDisabled(currentPage == totalPages);
 
+            buttons.add(currentPageButton);
             buttons.add(previousButton);
             buttons.add(nextButton);
         }
 
-        
         // Send the embed with buttons
-        hook.editOriginalEmbeds(embed).setActionRow(buttons).queue();
+        hook.editOriginal(emojiString.toString()).setComponents(ActionRow.of(buttons)).queue();
     }
 
     public static void handleNext(ButtonInteractionEvent event) {
@@ -170,5 +194,28 @@ public class ListCommand extends Command {
         values.setCurrentPage(newPage);
 
         showPage(event, emojis, newPage, totalPages, pageSize, uniqueID);
+    }
+
+    private static void expireSession(String sessionId, SlashCommandInteractionEvent event) {
+        CurrentValues values = currentValues.remove(sessionId); // Remove session data and get values
+    
+        if (values == null) {
+            return; // Session not found, nothing to expire
+        }
+    
+        // Retrieve interaction hook and update embed with expired message
+        InteractionHook hook = event.getHook();
+        if (hook == null) {
+            return; // Interaction hook not available
+        }
+    
+        MessageEmbed expiredEmbed = new EmbedBuilder()
+                .addField("Command Expired", "You can run the command again with /list", true)
+                .setColor(Color.RED)
+                .build();
+    
+
+        // Remove the buttons
+        hook.editOriginalEmbeds(expiredEmbed).setComponents().queue(); 
     }
 }
