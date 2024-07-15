@@ -48,6 +48,7 @@ public class CommandManager extends ListenerAdapter {
                 new RenameCommand(bot),
 
                 new JumboCommand(bot),
+                new FastCommand(bot),
                 new ListCommand(bot),
                 new SearchCommand(bot),
                 new EmojifyCommand(bot),

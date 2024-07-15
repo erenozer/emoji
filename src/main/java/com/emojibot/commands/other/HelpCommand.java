@@ -32,7 +32,7 @@ public class HelpCommand extends Command {
         //.setDescription("[Add me to your server!](https://discord.com/oauth2/authorize?client_id=414878659267133445)\nYou can find new emojis, search for emojis, and more!\nStart typing **/** (slash) to use my commands.\n\n[Need some help? Click here.](https://discord.gg/U5v2csS)")
         .setDescription("You can find new emojis, search for emojis, and more!\nStart typing **/** (slash) to use my commands.\nYou can join my [support server](https://discord.gg/U5v2csS) if have any questions. :^)")
         .addField("Featured Command", ":star: Search: Find a specific emoji that you like using our extensive search system!", false)
-        .addField("All Commands", "**list**, **jumbo**, **upload**, **delete**, **search**, **link**, **info**, **emojify**, **start**, **ping**\n\n>>> Example command usage: `/info`", false)
+        .addField("All Commands", "**list**, **jumbo**, **search**, **fast**, **rename**, **upload**, **delete**, **link**, **info**, **emojify**, **start**, **ping**\n\n>>> Example command usage: `/info`", false)
         .setColor(BotConfig.getGeneralEmbedColor())
         .setFooter("Made with ♥ by eren.im and ardasoyturk", event.getJDA().getSelfUser().getAvatarUrl())
         .setImage("https://cdn.discordapp.com/attachments/730414657478721607/733409659612037232/emoji.png")
