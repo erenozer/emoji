@@ -46,6 +46,8 @@ public class UploadCommand extends Command {
             return;
         }
 
+        emojiName = EmojiInput.removeInvalidEmojiCharacters(emojiName);
+
         // Check if either file, emoji, or URL is provided
         if ((fileOption == null && emojiOption == null && urlOption == null) || emojiName == null || emojiName.isEmpty()) {
             event.getHook().sendMessage(String.format("%s Please provide an emoji file, **or** an existing custom emoji, **or** a direct emoji link to upload.", BotConfig.noEmoji())).queue();

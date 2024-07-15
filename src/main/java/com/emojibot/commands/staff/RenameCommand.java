@@ -55,11 +55,11 @@ public class RenameCommand extends Command {
             event.getHook().sendMessage(String.format("%s The emoji with name \"%s\" does not exist in this server.", BotConfig.noEmoji(), emojiName)).queue();
             return;
         }
-
+        String newName = EmojiInput.removeInvalidEmojiCharacters(nameInput);
         // Rename the emoji
-        emote.getManager().setName(nameInput).reason("Responsible " + event.getUser()).queue(
-                success -> event.getHook().sendMessage(String.format("%s Emoji \"%s\" has been renamed to \"%s\".", BotConfig.yesEmoji(), emojiName, nameInput)).queue(),
-                error -> event.getHook().sendMessage(String.format("%s Failed to rename the emoji.", BotConfig.noEmoji())).queue()
+        emote.getManager().setName(newName).reason("Responsible " + event.getUser()).queue(
+                success -> event.getHook().sendMessage(String.format("%s Emoji \"%s\" has been renamed to \"%s\".", BotConfig.yesEmoji(), emojiName, newName)).queue(),
+                error -> event.getHook().sendMessage(String.format("%s I couldn't rename the emoji, make sure the name only contains English letters.", BotConfig.noEmoji())).queue()
         );
     }
 }
