@@ -1,6 +1,5 @@
 package com.emojibot.commands.emoji;
 
-import java.awt.Color;
 import java.util.Objects;
 
 import com.emojibot.Bot;

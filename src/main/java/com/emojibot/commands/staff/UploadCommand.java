@@ -39,14 +39,12 @@ public class UploadCommand extends Command {
         var fileOption = event.getOption("file");
         var emojiOption = event.getOption("emoji");
         var urlOption = event.getOption("link");
-        var emojiName = event.getOption("name").getAsString();
+        var emojiName = EmojiInput.removeInvalidEmojiCharacters(event.getOption("name").getAsString());
 
         if(emojiName.length() > 32 || emojiName.length() < 2) {
             event.getHook().sendMessage(String.format("%s Emoji name must be longer than 2, shorter than 32 characters.", BotConfig.noEmoji())).queue();
             return;
         }
-
-        emojiName = EmojiInput.removeInvalidEmojiCharacters(emojiName);
 
         // Check if either file, emoji, or URL is provided
         if ((fileOption == null && emojiOption == null && urlOption == null) || emojiName == null || emojiName.isEmpty()) {

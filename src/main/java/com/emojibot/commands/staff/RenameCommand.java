@@ -2,8 +2,6 @@ package com.emojibot.commands.staff;
 
 import java.util.Objects;
 
-import org.w3c.dom.NameList;
-
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.commands.utils.Command;
