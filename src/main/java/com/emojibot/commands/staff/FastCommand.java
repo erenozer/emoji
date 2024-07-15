@@ -14,16 +14,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class UploadCommand extends Command {
+public class FastCommand extends Command {
 
-    public UploadCommand(Bot bot) {
+    public FastCommand(Bot bot) {
         super(bot);
-        this.name = "upload";
-        this.description = "Upload an emoji to your server";
+        this.name = "fast";
+        this.description = "Fast upload an emoji to your server";
         this.cooldownDuration = 4;
 
         // Define options
-        this.args.add(new OptionData(OptionType.STRING, "name", "The name for the new emoji - Select one of the arguments (press TAB) after naming your emoji", true));
         this.args.add(new OptionData(OptionType.ATTACHMENT, "file", "The image file for the emoji", false));
         this.args.add(new OptionData(OptionType.STRING, "emoji", "Existing custom emoji to upload", false));
         this.args.add(new OptionData(OptionType.STRING, "link", "Direct URL of the emoji image", false));
@@ -39,20 +38,18 @@ public class UploadCommand extends Command {
         var fileOption = event.getOption("file");
         var emojiOption = event.getOption("emoji");
         var urlOption = event.getOption("link");
-        var emojiName = EmojiInput.removeInvalidEmojiCharacters(event.getOption("name").getAsString());
 
-        if(emojiName.length() > 32 || emojiName.length() < 2) {
-            event.getHook().sendMessage(String.format("%s Emoji name must be longer than 2, shorter than 32 characters.", BotConfig.noEmoji())).queue();
-            return;
-        }
 
         // Check if either file, emoji, or URL is provided
-        if ((fileOption == null && emojiOption == null && urlOption == null) || emojiName == null || emojiName.isEmpty()) {
+        if ((fileOption == null && emojiOption == null && urlOption == null)) {
             event.getHook().sendMessage(String.format("%s Please provide an emoji file, **or** an existing custom emoji, **or** a direct emoji link to upload.", BotConfig.noEmoji())).queue();
             return;
         }
 
         // If more than one option is provided, prioritize file > emoji > URL instead of throwing an error 
+
+        long emojiCount = event.getGuild().getEmojiCache().size();
+        String emojiName = "emoji_" + (emojiCount+1);
 
         if (fileOption != null) {
             // Check if the file is an image
@@ -94,7 +91,7 @@ public class UploadCommand extends Command {
             // Upload emoji from direct URL
             String emojiUrl = urlOption.getAsString();
             try (InputStream inputStream = new URL(emojiUrl).openStream()) {
-                uploadEmoji(event, emojiName, inputStream);
+                uploadEmoji(event, "emoji_" + (emojiCount+1), inputStream);
             } catch (Exception e) {
                 event.getHook().sendMessage(String.format("%s Upload failed, please make sure that:\n- Server has a free slot to upload an emoji", BotConfig.noEmoji())).queue();
             }
@@ -112,7 +109,7 @@ public class UploadCommand extends Command {
         Icon icon = Icon.from(inputStream);
         event.getGuild().createEmoji(emojiName, icon).reason("Responsible " + event.getUser())
             .queue(
-                emoji -> event.getHook().sendMessage(String.format("%s Emoji %s has been uploaded successfully!", BotConfig.yesEmoji(), emoji.getAsMention())).queue(),
+                emoji -> event.getHook().sendMessage(String.format("%s Emoji %s has been uploaded successfully with the name \"%s\"", BotConfig.yesEmoji(), emoji.getAsMention(), emojiName)).queue(),
                 error -> event.getHook().sendMessage(String.format("%s Upload failed, please make sure that:\n- Server has a free slot to upload an emoji\n- File is not bigger than 256kb in size", BotConfig.noEmoji())).queue()
             );
     }

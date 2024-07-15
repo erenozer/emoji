@@ -50,13 +50,13 @@ public class SearchCommand extends Command {
             if (similarEmojis.size() > emojiList.size()) {
                 // Reply with the similar emojis if they are more than the exact matches
                 replyWithFoundEmojis(event, similarEmojis);
-                event.getHook().sendMessage(BotConfig.infoEmoji() + " Similar named emojis were added!").setEphemeral(true).queue();
+                event.getHook().sendMessage(String.format("%s Similar named emojis were added!", BotConfig.infoEmoji())).setEphemeral(true).queue();
             } else if(!emojiList.isEmpty()) { 
                 // Reply with the found emojis if there are any
                 replyWithFoundEmojis(event, emojiList);
             } else {
                 // No similar or exact matches found
-                event.getHook().sendMessage(BotConfig.noEmoji() + " I couldn't find similar or exact matches to your search. :(").queue();
+                event.getHook().sendMessage(String.format("%s I couldn't find similar or exact matches to your search. :(", BotConfig.noEmoji())).queue();
             }
         }
     }

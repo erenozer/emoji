@@ -1,5 +1,6 @@
 package com.emojibot.commands.utils;
 
+import java.text.Normalizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,4 +42,43 @@ public class EmojiInput {
     public static String normalize(String input) {
         return input.trim().replaceAll("\\s+", "");
     }
+
+    /**
+     * Removes Turkish characters and other invalid characters from the given string
+     * and returns a normalized version that can be used as an emoji name.
+     *
+     * @param input The input string to normalize.
+     * @return The normalized string with invalid characters removed.
+     */
+    public static String removeInvalidEmojiCharacters(String input) {
+        if (input == null) {
+            return "";
+        }
+
+        // Normalize the string to decompose characters with accents
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+
+        // Remove accents and diacritical marks
+        normalized = normalized.replaceAll("\\p{M}", "");
+
+        // Remove Turkish characters
+        normalized = normalized.replace('ç', 'c')
+                               .replace('Ç', 'C')
+                               .replace('ğ', 'g')
+                               .replace('Ğ', 'G')
+                               .replace('ı', 'i')
+                               .replace('İ', 'I')
+                               .replace('ş', 's')
+                               .replace('Ş', 'S')
+                               .replace('ü', 'u')
+                               .replace('Ü', 'U')
+                               .replace('ö', 'o')
+                               .replace('Ö', 'O');
+
+        // Remove any characters that are not alphanumeric or underscores
+        normalized = normalized.replaceAll("[^a-zA-Z0-9_]", "");
+
+        return normalized;
+    }
+
 }
