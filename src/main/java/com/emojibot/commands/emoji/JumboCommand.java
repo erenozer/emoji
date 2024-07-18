@@ -45,12 +45,13 @@ public class JumboCommand extends Command {
             // Emoji is not provided directly, search for it in the server using the name
             var emoji = event.getGuild().getEmojisByName(emojiName, false).stream().findFirst().orElse(null);
 
-            if(emoji != null)
+            if(emoji != null) {
                 url = emoji.getImageUrl();
+            }
         }
 
         if(url == null) {
-            event.reply(String.format("%s I can't find the emoji, please send the emoji itself or the name of it (if it's in this server).", BotConfig.noEmoji())).queue();
+            event.getHook().sendMessage(String.format("%s I can't find the emoji, please send the emoji itself or the name of it (if it's in this server).", BotConfig.noEmoji())).queue();
             return;
         }
 
