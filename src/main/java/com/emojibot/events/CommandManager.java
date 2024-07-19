@@ -7,7 +7,6 @@ import com.emojibot.commands.other.*;
 import com.emojibot.commands.staff.*;
 import com.emojibot.commands.utils.Command;
 
-import com.emojibot.events.CooldownManager;
 import club.minnced.discord.webhook.WebhookClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.Permission;
@@ -19,10 +18,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,16 +1,12 @@
 package com.emojibot.commands.emoji;
 
-import java.util.Objects;
-
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;

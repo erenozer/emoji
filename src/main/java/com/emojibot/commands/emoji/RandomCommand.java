@@ -1,8 +1,5 @@
 package com.emojibot.commands.emoji;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
@@ -11,7 +8,6 @@ import com.emojibot.commands.utils.Command;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
