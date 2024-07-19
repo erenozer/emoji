@@ -85,14 +85,17 @@ public class ListCommand extends Command {
         }
 
         int pageSize = 10;
-        int totalPages = (int) Math.ceil((double) emojis.size() / pageSize); // Calculate total pages
+        
+        // Calculate total pages
+        int totalPages = (int) Math.ceil((double) emojis.size() / pageSize); 
 
         String sessionId = ButtonListener.createUniqueId(event.getUser().getId());
         currentValues.put(sessionId, new CurrentValues(1, totalPages, pageSize, emojis));
 
-        showPage(event, emojis, 1, totalPages, pageSize, sessionId); // Show the first page initially
+        // Show the first page initially
+        showPage(event, emojis, 1, totalPages, pageSize, sessionId); 
 
-        // Schedule expiration check after 2 minutes
+        // Schedule expiration of the buttons after 3 minutes
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -119,14 +122,6 @@ public class ListCommand extends Command {
         for (int i = startIndex; i < endIndex; i++) {
             emojiString.append(emojis.get(i).getAsMention()).append(" ");
         }
-        /* 
-        MessageEmbed embed = new EmbedBuilder()
-                .setTitle("Emoji List - Page " + currentPage + "/" + totalPages)
-                .setDescription(emojiString.toString())
-                .setColor(BotConfig.getGeneralEmbedColor())
-                .build();
-        */
-
 
         // Create buttons based on current page
         List<ItemComponent> buttons = new ArrayList<>();

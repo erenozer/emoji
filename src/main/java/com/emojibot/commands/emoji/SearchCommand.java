@@ -6,6 +6,7 @@ import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -20,11 +21,13 @@ public class SearchCommand extends Command {
     public SearchCommand(Bot bot) {
         super(bot);
         this.name = "search";
-        this.description = "Search for specific emojis by name";
+        this.description = "Search for specific emojis by name, result can contain similar named emojis too!";
         this.cooldownDuration = 6;
+        this.botPermission = Permission.MESSAGE_EXT_EMOJI;
 
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "name", "Emoji name to be searched", true, false);
         this.args.add(emojiNameArgument);
+        
 
         this.emojiCache = bot.getEmojiCache();
     }
