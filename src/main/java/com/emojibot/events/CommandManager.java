@@ -47,6 +47,7 @@ public class CommandManager extends ListenerAdapter {
                 new UploadCommand(bot),
                 new RenameCommand(bot),
 
+                new SendCommand(bot),
                 new JumboCommand(bot),
                 new FastCommand(bot),
                 new ListCommand(bot),
@@ -139,7 +140,7 @@ public class CommandManager extends ListenerAdapter {
 
                 // Log the exception using the webhook
                 try (WebhookClient client = WebhookClient.withUrl(config.get("URL_LOGS_WEBHOOK"))) {
-                    String errMessage = String.format(":warning: Unhandled exception with command %s at guild %s (%s), by user %s (%s):\n```java%s```", event.getName(), event.getGuild().getName(), event.getGuild().getId(), event.getUser().getAsMention(), event.getUser().getId(), e.getMessage());
+                    String errMessage = String.format(":warning: Unhandled exception with command %s at guild %s (%s), by user %s (%s):\n```%s```", event.getName(), event.getGuild().getName(), event.getGuild().getId(), event.getUser().getAsMention(), event.getUser().getId(), e.getMessage());
                     client.send(errMessage);
                 } 
             }

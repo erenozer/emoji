@@ -23,7 +23,7 @@ public class EmojiInfoCommand extends Command {
         this.description = "Get information about an emoji";
         this.cooldownDuration = 3;
 
-        OptionData emojiNameArgument = new OptionData(OptionType.STRING, "emoji", "Emoji to get it's info", true, false);
+        OptionData emojiNameArgument = new OptionData(OptionType.STRING, "emoji", "Emoji/name from this server to get it's info", true, false);
         this.args.add(emojiNameArgument);
     }
 

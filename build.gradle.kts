@@ -22,6 +22,9 @@ dependencies {
     // logging for jda
     implementation("ch.qos.logback:logback-classic:1.5.6")
 
+    // mongodb for database
+    implementation("org.mongodb:mongodb-driver-sync:5.1.2")
+
     // webhooks for logs
     implementation("club.minnced:discord-webhooks:0.8.4")
 
