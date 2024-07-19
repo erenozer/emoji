@@ -79,6 +79,11 @@ public class ListCommand extends Command {
         event.deferReply(true).queue();
         List<RichCustomEmoji> emojis = event.getGuild().getEmojiCache().asList();
 
+        if(emojis.isEmpty()) {
+            event.getHook().sendMessage(String.format("%s There are no emojis in the server. :^)", BotConfig.infoEmoji())).queue();
+            return;
+        }
+
         int pageSize = 10;
         int totalPages = (int) Math.ceil((double) emojis.size() / pageSize); // Calculate total pages
 
@@ -125,7 +130,7 @@ public class ListCommand extends Command {
 
         // Create buttons based on current page
         List<ItemComponent> buttons = new ArrayList<>();
-        if (totalPages > 1) {
+        if (totalPages >= 0) {
             String prevButtonId = sessionId + ":list:previous";
             String nextButtonId = sessionId + ":list:next";
 

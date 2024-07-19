@@ -1,5 +1,6 @@
 package com.emojibot;
 
+import com.emojibot.commands.utils.MongoManager;
 import com.emojibot.events.ButtonListener;
 import com.emojibot.events.CommandManager;
 import com.emojibot.events.EventListener;
@@ -27,7 +28,8 @@ public class Bot {
 
     public Bot() {
         try {
-
+            // Initialize the MongoDB connection
+            MongoManager.connect();
             /*
             // Calculate the number of shards needed manually if auto is not good enough
             int totalGuilds = 96500;
@@ -49,6 +51,9 @@ public class Bot {
                     .addEventListeners(new EventListener(), new CommandManager(this), emojiCache, new ButtonListener(this));
 
             shardManager = builder.build();
+
+            // Shutdown hook to disconnect from MongoDB
+            Runtime.getRuntime().addShutdownHook(new Thread(MongoManager::disconnect));
 
         } catch (InvalidTokenException e) {
             System.err.println("Invalid token provided. Please check your token and try again.");
