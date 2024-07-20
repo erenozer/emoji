@@ -89,6 +89,7 @@ public class ListCommand extends Command {
         // Calculate total pages
         int totalPages = (int) Math.ceil((double) emojis.size() / pageSize); 
 
+        // Create a unique session id for the validity of the buttons
         String sessionId = ButtonListener.createUniqueId(event.getUser().getId());
         currentValues.put(sessionId, new CurrentValues(1, totalPages, pageSize, emojis));
 

@@ -3,6 +3,7 @@ package com.emojibot.commands.emoji;
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
+import com.emojibot.commands.utils.UsageTerms;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 
@@ -36,6 +37,12 @@ public class SearchCommand extends Command {
     public void run(SlashCommandInteractionEvent event) {
         // Defer the reply to avoid the 3 second timeout while searching, will use hooks to reply later
         event.deferReply().queue();
+
+        if(UsageTerms.checkUserStatus(event.getUser().getId()) != 1) {
+            // User has not accepted the terms
+            UsageTerms.validateTerms(event.getHook());
+            return;
+        }
 
         String emojiInput = EmojiInput.normalize(Objects.requireNonNull(event.getOption("name")).getAsString());
 

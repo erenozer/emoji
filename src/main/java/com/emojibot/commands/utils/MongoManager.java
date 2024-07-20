@@ -1,7 +1,10 @@
 package com.emojibot.commands.utils;
 
+import org.bson.Document;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -17,7 +20,7 @@ public class MongoManager {
         database = mongoClient.getDatabase("emojiBot");
     }
 
-    public static MongoDatabase getDatabase() {
+    private static MongoDatabase getDatabase() {
         if (database == null) {
             connect();
         }
@@ -27,6 +30,15 @@ public class MongoManager {
     public static void disconnect() {
         if (mongoClient != null) {
             mongoClient.close();
+        }
+    }
+
+    public static MongoCollection<Document> getUsageTermsCollection() {
+        try {
+            return getDatabase().getCollection("usage_terms");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

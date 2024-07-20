@@ -1,12 +1,13 @@
 package com.emojibot.commands.emoji;
 
-import java.util.Queue;
 import java.util.Random;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.UsageTerms;
+import com.emojibot.events.ButtonListener;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
@@ -32,10 +33,18 @@ public class RandomCommand extends Command {
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
+        // Check for usage terms 
+        if(UsageTerms.checkUserStatus(event.getUser().getId()) != 1) {
+            // User has not accepted the terms
+            UsageTerms.validateTerms(event.getHook());
+            return;
+        }
+            
+
         var countInput = event.getOption("count");
         if(countInput != null) {
             // Count is provided, get the value
-            int count = (int) countInput.getAsInt();
+            int count = (int)countInput.getAsInt();
 
             if(count < 1 || count > 25) {
                 event.getHook().sendMessage(String.format("%s Please provide a count between 1 and 25.", BotConfig.noEmoji())).queue();
