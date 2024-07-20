@@ -3,9 +3,11 @@ package com.emojibot.commands.emoji;
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
+import com.emojibot.commands.utils.UsageTerms;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -20,11 +22,13 @@ public class SearchCommand extends Command {
     public SearchCommand(Bot bot) {
         super(bot);
         this.name = "search";
-        this.description = "Search for specific emojis by name";
+        this.description = "Search for specific emojis by name, result can contain similar named emojis too!";
         this.cooldownDuration = 6;
+        this.botPermission = Permission.MESSAGE_EXT_EMOJI;
 
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "name", "Emoji name to be searched", true, false);
         this.args.add(emojiNameArgument);
+        
 
         this.emojiCache = bot.getEmojiCache();
     }
@@ -33,6 +37,12 @@ public class SearchCommand extends Command {
     public void run(SlashCommandInteractionEvent event) {
         // Defer the reply to avoid the 3 second timeout while searching, will use hooks to reply later
         event.deferReply().queue();
+
+        if(UsageTerms.checkUserStatus(event.getUser().getId()) != 1) {
+            // User has not accepted the terms
+            UsageTerms.validateTerms(event.getHook());
+            return;
+        }
 
         String emojiInput = EmojiInput.normalize(Objects.requireNonNull(event.getOption("name")).getAsString());
 

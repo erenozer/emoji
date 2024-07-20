@@ -7,7 +7,6 @@ import com.emojibot.commands.other.*;
 import com.emojibot.commands.staff.*;
 import com.emojibot.commands.utils.Command;
 
-import com.emojibot.events.CooldownManager;
 import club.minnced.discord.webhook.WebhookClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.Permission;
@@ -19,10 +18,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,6 +44,7 @@ public class CommandManager extends ListenerAdapter {
                 new UploadCommand(bot),
                 new RenameCommand(bot),
 
+                new RandomCommand(bot),
                 new SendCommand(bot),
                 new JumboCommand(bot),
                 new FastCommand(bot),
@@ -118,7 +116,7 @@ public class CommandManager extends ListenerAdapter {
             Role botRole = event.getGuild().getBotRole();
             if (botRole != null && command.botPermission != null) {
                 if (!botRole.hasPermission(command.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
-                    event.reply(String.format("%s I need **%s** permission to execute that command.", BotConfig.noEmoji(), command.botPermission.getName())).setEphemeral(true).queue();
+                    event.reply(String.format(":information_source: I need **%s** permission to run that command. Please give the specified permission to one of my roles.", command.botPermission.getName())).setEphemeral(true).queue();
                     return;
                 }
             }

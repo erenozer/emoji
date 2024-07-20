@@ -10,10 +10,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class EmojiCache extends ListenerAdapter {
     // Save the emojis in a map with the emoji NAME as the key
     private final Map<String, List<RichCustomEmoji>> emojiCache = new HashMap<>();
+
+    private List<RichCustomEmoji> allEmojis = new ArrayList<>();
 
     /**
      * Cache emojis when a guild is ready (bot reconnects)
@@ -38,6 +41,7 @@ public class EmojiCache extends ListenerAdapter {
     private void cacheEmojis(Guild guild) {
         for (RichCustomEmoji emoji : guild.getEmojiCache()) {
             emojiCache.computeIfAbsent(emoji.getName(), k -> new ArrayList<>()).add(emoji);
+            allEmojis.add(emoji);
         }
     }
 
@@ -55,11 +59,19 @@ public class EmojiCache extends ListenerAdapter {
      * @return A list of all emojis
      */
     public List<RichCustomEmoji> getAllEmojis() {
-        List<RichCustomEmoji> allEmojis = new ArrayList<>();
-        for (List<RichCustomEmoji> emojis : emojiCache.values()) {
-            allEmojis.addAll(emojis);
-        }
         return allEmojis;
+    }
+
+    public List<RichCustomEmoji> getRandomEmojis(int count) {
+        List<RichCustomEmoji> randomEmojis = new ArrayList<>(count);
+        Random random = new Random();
+        int size = allEmojis.size();
+
+        for (int i = 0; i < count; i++) {
+            randomEmojis.add(allEmojis.get(random.nextInt(size)));
+        }
+
+        return randomEmojis;
     }
 
 }
