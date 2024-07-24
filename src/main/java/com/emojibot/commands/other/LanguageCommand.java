@@ -2,7 +2,7 @@ package com.emojibot.commands.other;
 
 import com.emojibot.Bot;
 import com.emojibot.commands.utils.Command;
-import com.emojibot.commands.utils.LanguageManager;
+import com.emojibot.commands.utils.language.LanguageManager;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -21,6 +21,6 @@ public class LanguageCommand extends Command {
         
         // Ask the user for language, this will send a message with buttons, and handle the response
         LanguageManager.askUserForLanguage(event.getHook());
-        
+
     }
 }

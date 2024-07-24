@@ -1,4 +1,4 @@
-package com.emojibot.commands.utils;
+package com.emojibot.commands.utils.language;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -11,6 +11,7 @@ import java.util.Locale;
 import org.bson.Document;
 
 import com.emojibot.BotConfig;
+import com.emojibot.commands.utils.MongoManager;
 import com.emojibot.events.ButtonListener;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
@@ -136,9 +137,9 @@ public class LanguageManager {
 
         if(isSuccess) {
            if(language.equals("en")) {
-                event.editMessage(String.format("🇺🇸 Language set to English for %s.", event.getUser().getEffectiveName())).setComponents().queue();
+                event.editMessage(String.format("%s Your language is set to English.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
               } else if(language.equals("tr")) {
-                event.editMessage(String.format("🇹🇷 %s için dil Türkçe olarak ayarlandı.\n\n:warning: Bot komutlarının isimleri discord'un sınırları sebebiyle İngilizce kalmaya devam edecektir, komutların içerikleri ve mesajları ise Türkçe olacaktır. **Komut isimlerinin Türkçe karşılıklarını görmek için /start yazabilirsiniz.**", event.getUser().getEffectiveName())).setComponents().queue();
+                event.editMessage(String.format("%s Diliniz Türkçe olarak ayarlandı.\n\n:warning: Bot komutlarının isimleri discord'un sınırları sebebiyle İngilizce kalmaya devam edecektir, komutların içerikleri ve mesajları ise Türkçe olacaktır. **Komut isimlerinin Türkçe karşılıklarını görmek için /start yazabilirsiniz.**", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
               } else {
                 event.editMessage(String.format("%s There was an error with your request. Please try again.", BotConfig.noEmoji())).setComponents().queue();
            }
