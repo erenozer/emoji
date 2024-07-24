@@ -42,7 +42,7 @@ public class Bot {
             // Blue emoji color - 0xa7cfe2
 
             DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createLight(getToken())
-                    .setStatus(OnlineStatus.IDLE)
+                    .setStatus(OnlineStatus.ONLINE)
                     .setActivity(Activity.watching("/start to get started with Emoji!"))
                     .setMemberCachePolicy(MemberCachePolicy.NONE)
                     .enableCache(CacheFlag.EMOJI, CacheFlag.ROLE_TAGS)
