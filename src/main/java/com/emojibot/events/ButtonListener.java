@@ -2,6 +2,7 @@ package com.emojibot.events;
 
 import com.emojibot.Bot;
 import com.emojibot.commands.emoji.ListCommand;
+import com.emojibot.commands.utils.LanguageManager;
 import com.emojibot.commands.utils.UsageTerms;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -20,7 +21,7 @@ public class ButtonListener extends ListenerAdapter {
      * @param bot
      */
     public ButtonListener(Bot bot) {
-        // List command next/previous page handlers
+        // List command next/previous page buttons
         registerButtonHandler("list:previous", event -> {
             ListCommand.handlePrevious(event);
         });
@@ -38,6 +39,18 @@ public class ButtonListener extends ListenerAdapter {
             boolean result = UsageTerms.setUserStatus(event.getUser().getId(), false);
 
             UsageTerms.handleClick(event, result, false);
+        });
+
+        // Language selection buttons
+        registerButtonHandler("language:en", event -> {
+            boolean result = LanguageManager.setUserLanguage(event.getUser().getId(), "en");
+            
+            LanguageManager.handleClick(event, result, "en");
+        });
+        registerButtonHandler("language:tr", event -> {
+            boolean result = LanguageManager.setUserLanguage(event.getUser().getId(), "tr");
+
+            LanguageManager.handleClick(event, result, "tr");
         });
 
     }
