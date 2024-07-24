@@ -1,9 +1,11 @@
 plugins {
     id("java")
+    id("application")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "com.emojibot"
-version = "1.0"
+version = "1.1"
 
 repositories {
     mavenCentral()
@@ -32,4 +34,16 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+// fat Jar file to run the bot (includes all the dependencies)
+tasks.shadowJar {
+    archiveBaseName.set("emojibot")
+    archiveClassifier.set("") // Removes the '-all' suffix
+    archiveVersion.set("1.1") // Version
+}
+
+application {
+    // Specify the main class of your application
+    mainClass.set("com.emojibot.Bot") // Adjust this to your actual main class path
 }

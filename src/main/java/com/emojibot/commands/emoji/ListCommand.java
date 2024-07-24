@@ -76,7 +76,7 @@ public class ListCommand extends Command {
 
     @Override
     public void run(SlashCommandInteractionEvent event) {
-        event.deferReply(true).queue();
+        event.deferReply().queue();
         List<RichCustomEmoji> emojis = event.getGuild().getEmojiCache().asList();
 
         if(emojis.isEmpty()) {
@@ -96,13 +96,13 @@ public class ListCommand extends Command {
         // Show the first page initially
         showPage(event, emojis, 1, totalPages, pageSize, sessionId); 
 
-        // Schedule expiration of the buttons after 3 minutes
+        // Schedule expiration of the buttons after 2 minutes
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 expireSession(sessionId, event);
             }
-        }, Duration.ofMinutes(3).toMillis());
+        }, Duration.ofMinutes(2).toMillis());
     }
 
     private static void showPage(SlashCommandInteractionEvent event, List<RichCustomEmoji> emojis, int currentPage, int totalPages, int pageSize, String sessionId) {
@@ -205,7 +205,7 @@ public class ListCommand extends Command {
         }
     
         MessageEmbed expiredEmbed = new EmbedBuilder()
-                .addField("Command Expired", "You can run the command again with /list", true)
+                .addField("Buttons Expired", "You can run the command again with /list", true)
                 .setColor(Color.RED)
                 .build();
     

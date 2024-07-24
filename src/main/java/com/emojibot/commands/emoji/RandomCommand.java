@@ -7,7 +7,6 @@ import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.UsageTerms;
-import com.emojibot.events.ButtonListener;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
