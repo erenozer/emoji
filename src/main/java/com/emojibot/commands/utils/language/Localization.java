@@ -17,7 +17,7 @@ public class Localization {
         return messages.getString(key);
     }
 
-    public static Localization getLocalizationManager(String userId) {
+    public static Localization getLocalization(String userId) {
         Locale locale = LanguageManager.getUserLanguageLocal(userId);
         return new Localization(locale);
     }

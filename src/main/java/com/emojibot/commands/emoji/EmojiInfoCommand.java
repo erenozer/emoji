@@ -36,7 +36,7 @@ public class EmojiInfoCommand extends Command {
         event.deferReply().queue();
 
         // Get the localization manager for the user
-        Localization localization = Localization.getLocalizationManager(event.getUser().getId());
+        Localization localization = Localization.getLocalization(event.getUser().getId());
 
         String emojiNotFoundMsg = localization.getMsg("info_command", "emoji_not_found");
 
