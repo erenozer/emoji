@@ -55,6 +55,7 @@ public class CommandManager extends ListenerAdapter {
                 new EmojiInfoCommand(bot),
 
                 new PingCommand(bot),
+                new LanguageCommand(bot),
                 new HelpCommand(bot)
         );
     }
@@ -166,6 +167,8 @@ public class CommandManager extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent event) {
         if (USE_GLOBAL_COMMANDS) {
             event.getJDA().updateCommands().addCommands(unpackCommandData()).queue();
+        } else {
+            event.getJDA().updateCommands().queue();
         }
     }
 

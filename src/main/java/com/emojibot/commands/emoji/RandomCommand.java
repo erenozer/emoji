@@ -7,6 +7,7 @@ import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.UsageTerms;
+import com.emojibot.commands.utils.language.Localization;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
@@ -21,8 +22,8 @@ public class RandomCommand extends Command {
         super(bot);
         this.name = "random";
         this.description = "Receive random emojis from the bot!";
-        this.args.add(new OptionData(OptionType.INTEGER, "count", "Random emoji count, up to 25", false));
-        this.cooldownDuration = 5;
+        this.args.add(new OptionData(OptionType.INTEGER, "count", "Emoji count, up to 20 emojis at once", false));
+        this.cooldownDuration = 4;
         this.emojiCache = bot.getEmojiCache();
         this.botPermission = Permission.MESSAGE_EXT_EMOJI;
     }
@@ -39,21 +40,22 @@ public class RandomCommand extends Command {
             return;
         }
             
+        Localization localization = Localization.getLocalization(event.getUser().getId());
 
         var countInput = event.getOption("count");
         if(countInput != null) {
             // Count is provided, get the value
             int count = (int)countInput.getAsInt();
 
-            if(count < 1 || count > 25) {
-                event.getHook().sendMessage(String.format("%s Please provide a count between 1 and 25.", BotConfig.noEmoji())).queue();
+            if(count < 1 || count > 20) {
+                event.getHook().sendMessage(String.format(localization.getMsg("random_command", "invalid_count"), BotConfig.noEmoji())).queue();
                 return;
             }
 
             var randomEmojis = emojiCache.getRandomEmojis(count);
 
             if(randomEmojis.isEmpty()) {
-                event.getHook().sendMessage(String.format("%s I couldn't find any emojis to send.", BotConfig.noEmoji())).queue();
+                event.getHook().sendMessage(String.format(localization.getMsg("random_command", "no_emojis"), BotConfig.noEmoji())).queue();
                 return;
             }
 
@@ -75,21 +77,21 @@ public class RandomCommand extends Command {
             var randomEmoji = emojiCache.getRandomEmojis(1).stream().findFirst().orElse(null);
 
             if(randomEmoji == null) {
-                event.getHook().sendMessage(String.format("%s I couldn't find any emojis to send.", BotConfig.noEmoji())).queue();
+                event.getHook().sendMessage(String.format(localization.getMsg("random_command", "no_emojis"), BotConfig.noEmoji())).queue();
                 return;
             }
 
             Random random = new Random();
-            int randomNumber = random.nextInt(5,26);
-            // Random number can be 5 6 7 ... 25
-            if(randomNumber > 12) {
-                event.getHook().sendMessage(String.format("%s **Tip:** You can get more than one random emoji at once! Try /random %d", BotConfig.infoEmoji(), randomNumber)).queue();
-            }
+            int randomNumber = random.nextInt(5,21);
+            // Random number can be 5 6 7 ... 20 (valid counts for random emojis)
 
             event.getHook().sendMessage(randomEmoji.getAsMention()).queue();
+
+            if(randomNumber > 12) {
+                // On some occasions, suggest the user to get more than one random emoji
+                event.getHook().sendMessage(String.format(localization.getMsg("random_command", "multiple_tip"), BotConfig.infoEmoji(), randomNumber)).setEphemeral(true).queue();
+            }
         }
     }
-
-
 
 }

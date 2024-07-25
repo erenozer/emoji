@@ -5,6 +5,7 @@ import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
+import com.emojibot.commands.utils.language.Localization;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -31,12 +32,15 @@ public class SendCommand extends Command {
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
+        Localization localization = Localization.getLocalization(event.getUser().getId());
+
         String emojiInput = event.getOption("name").getAsString();
 
         String emojiName = (EmojiInput.extractEmojiName(emojiInput));
         String emojiId = EmojiInput.extractEmojiId(emojiInput);
+
         if(emojiId != null) {
-            event.getHook().sendMessage(String.format("%s Please only write the **name** of the emoji for me to send. Otherwise, you can send the emoji yourself. :^)", BotConfig.noEmoji())).queue();
+            event.getHook().sendMessage(String.format(localization.getMsg("send_command", "only_name"), BotConfig.noEmoji())).queue();
             return;
         }
 
@@ -47,7 +51,7 @@ public class SendCommand extends Command {
 
         // If not found in the server, search for the emoji in the bot's cache 
         if(emoji == null) {
-            emoji = emojiCache.getEmojis(emojiName).stream().findFirst().orElse(null);
+            emoji = emojiCache.getEmojis(emojiName).stream().findAny().orElse(null);
         }
 
         // If emoji is found using either method, get it as mention
@@ -56,7 +60,7 @@ public class SendCommand extends Command {
         } 
 
         if(formattedEmoji == null) {
-            event.getHook().sendMessage(String.format("%s I can't find the emoji, please send the emoji itself or the name of it.", BotConfig.noEmoji())).queue();
+            event.getHook().sendMessage(String.format(localization.getMsg("send_command", "emoji_not_found"), BotConfig.noEmoji())).queue();
             return;
         }
 

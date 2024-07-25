@@ -2,6 +2,7 @@ package com.emojibot.commands.emoji;
 
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
+import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 
@@ -13,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -32,30 +34,32 @@ public class EmojiInfoCommand extends Command {
         // Using embeds, defer the reply to use the hook later
         event.deferReply().queue();
 
+        // Get the localization manager for the user
+        Localization localization = Localization.getLocalization(event.getUser().getId());
+
+        String emojiNotFoundMsg = localization.getMsg("info_command", "emoji_not_found");
+
         String emojiInput = EmojiInput.normalize(Objects.requireNonNull(event.getOption("emoji")).getAsString());
         String emojiName = EmojiInput.extractEmojiName(emojiInput);
 
         RichCustomEmoji emoji = event.getGuild().getEmojisByName(emojiName, false).stream().findFirst().orElse(null);
 
         if (emoji == null) {
-            event.getHook().sendMessage(BotConfig.noEmoji() + " Make sure the emoji you are looking for is from **this server**.").setEphemeral(true).queue();
+            event.getHook().sendMessage(String.format(emojiNotFoundMsg, BotConfig.noEmoji())).setEphemeral(true).queue();
         } else {
-            StringBuilder response = new StringBuilder();
-            response.append("Information for the emoji `").append(emojiName).append("`:\n");
-
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
             String formattedDate = emoji.getTimeCreated().format(formatter);
 
             MessageEmbed infoEmbed = new EmbedBuilder()
-                    .setTitle("Emoji Information")
+                    .setTitle(localization.getMsg("info_command", "emoji_info"))
                     .setColor(BotConfig.getGeneralEmbedColor())
                     //.setDescription("Information for the emoji `" + emojiName + "`:")
                     .addField("ID", emoji.getId(), true)
-                    .addField("Name", emoji.getName(), true)
-                    .addField("Date Added", formattedDate, true)
-                    .addField("Animated?", emoji.isAnimated() ? "Yes" : "No", true)
-                    .addField("Managed?", emoji.isManaged() ? "Yes" : "No", true)
-                    .addField("Usage", "`<"+emoji.getName()+":"+emoji.getId()+">`", true)
+                    .addField(localization.getMsg("info_command", "name"), emoji.getName(), true)
+                    .addField(localization.getMsg("info_command", "date"), formattedDate, true)
+                    .addField(localization.getMsg("info_command", "animated"), emoji.isAnimated() ? BotConfig.yesEmoji() : BotConfig.noEmoji(), true)
+                    .addField(localization.getMsg("info_command", "managed"), emoji.isManaged() ? BotConfig.yesEmoji() : BotConfig.noEmoji(), true)
+                    .addField(localization.getMsg("info_command", "usage"), "`<"+emoji.getName()+":"+emoji.getId()+">`", true)
                     .setThumbnail(emoji.getImageUrl())
                     .build();
 

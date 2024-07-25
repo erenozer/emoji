@@ -4,6 +4,7 @@ import com.emojibot.EmojiCache;
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.commands.utils.UsageTerms;
+import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 
@@ -12,9 +13,13 @@ import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+//TODO: Limit the number of emoji results to 25
 
 public class SearchCommand extends Command {
     private final EmojiCache emojiCache;
@@ -44,6 +49,8 @@ public class SearchCommand extends Command {
             return;
         }
 
+        Localization localization = Localization.getLocalization(event.getUser().getId());
+
         String emojiInput = EmojiInput.normalize(Objects.requireNonNull(event.getOption("name")).getAsString());
 
         String emojiName = EmojiInput.extractEmojiName(emojiInput);
@@ -52,7 +59,7 @@ public class SearchCommand extends Command {
 
         // getEmojis returns a list of emojis that match the search query
         // that list will not be null, if no emojis are found, the list will be empty
-        if (!emojiList.isEmpty() && emojiList.size() > 25) {
+        if (!emojiList.isEmpty() && emojiList.size() >= 25) {
             replyWithFoundEmojis(event, emojiList);
         } else {
             // Try a fuzzy search if less than 25 emojis are found/no emojis are found
@@ -60,17 +67,22 @@ public class SearchCommand extends Command {
             if (similarEmojis.size() > emojiList.size()) {
                 // Reply with the similar emojis if they are more than the exact matches
                 replyWithFoundEmojis(event, similarEmojis);
-                event.getHook().sendMessage(String.format("%s Similar named emojis were added!", BotConfig.infoEmoji())).setEphemeral(true).queue();
+                event.getHook().sendMessage(String.format(localization.getMsg("search_command", "similar_added"), BotConfig.infoEmoji())).setEphemeral(true).queue();
             } else if(!emojiList.isEmpty()) { 
                 // Reply with the found emojis if there are any
                 replyWithFoundEmojis(event, emojiList);
             } else {
                 // No similar or exact matches found
-                event.getHook().sendMessage(String.format("%s I couldn't find similar or exact matches to your search. :(", BotConfig.noEmoji())).queue();
+                event.getHook().sendMessage(String.format(localization.getMsg("search_command", "no_results"), BotConfig.noEmoji())).queue();
             }
         }
     }
 
+    /**
+     * Reply with the found emojis in the search
+     * @param event
+     * @param emojiList
+     */
     private void replyWithFoundEmojis(SlashCommandInteractionEvent event, List<RichCustomEmoji> emojiList) {
         // Create a reply message with the found emojis and send it
         StringBuilder replyMessage = new StringBuilder();
@@ -92,6 +104,12 @@ public class SearchCommand extends Command {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Calculate the Levenshtein distance between two strings s1 and s2 for fuzzy search
+     * @param s1 String 1
+     * @param s2 String 2
+     * @return Levenshtein distance between the two strings
+     */
     private int levenshteinDistance(String s1, String s2) {
         int[][] dp = new int[s1.length() + 1][s2.length() + 1];
 

@@ -1,7 +1,9 @@
 package com.emojibot.commands.emoji;
 
 import com.emojibot.Bot;
+import com.emojibot.BotConfig;
 import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.language.Localization;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -29,13 +31,18 @@ public class EmojifyCommand extends Command {
     @Override
     public void run(SlashCommandInteractionEvent event) {
         String text = Objects.requireNonNull(event.getOption("text")).getAsString();
+
+        Localization localization = Localization.getLocalization(event.getUser().getId());
+
         if (text.length() > 40) {
-            event.reply("Your message should be less than 40 characters.").setEphemeral(true).queue();
+            event.reply(String.format(localization.getMsg("emojify_command", "too_long_message"), BotConfig.noEmoji())).setEphemeral(true).queue();
             return;
         }
+
         text = turToEng(text); // Convert Turkish characters to English equivalents
 
         StringBuilder emojifiedText = new StringBuilder();
+
         for (char ch : text.toCharArray()) {
             String mapped = mapping.get(String.valueOf(ch));
             if (mapped != null) {
