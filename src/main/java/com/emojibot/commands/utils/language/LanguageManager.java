@@ -100,12 +100,7 @@ public class LanguageManager {
         // Create a filter to find the document from user_id field that matches the userId we are looking for
         Document filter = new Document("user_id", userId);
 
-        /*
-        if(getUserLanguageString(userId).equals(newLanguage)) {
-            // Language is already set to this language
-            return true;
-        }
-        */
+        // Update the language for the user even if the language is the same
 
         // Create a document with set operator to update the language
         Document update = new Document("$set", new Document("language", newLanguage));
@@ -139,7 +134,7 @@ public class LanguageManager {
            if(language.equals("en")) {
                 event.editMessage(String.format("%s Your language is set to English.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
               } else if(language.equals("tr")) {
-                event.editMessage(String.format("%s Diliniz Türkçe olarak ayarlandı.\n\n:warning: Bot komutlarının isimleri discord'un sınırları sebebiyle İngilizce kalmaya devam edecektir, komutların içerikleri ve mesajları ise Türkçe olacaktır. **Komut isimlerinin Türkçe karşılıklarını görmek için /start yazabilirsiniz.**", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
+                event.editMessage(String.format("%s Diliniz Türkçe olarak ayarlandı.\n\n:warning: Bot komutlarının isimleri discord'un sınırları sebebiyle İngilizce kalmaya devam edecektir, komutların içerikleri ve mesajları ise Türkçe olacaktır.\n**Komut isimlerinin Türkçe açıklamalarını görmek için /help yazabilirsiniz.**", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
               } else {
                 event.editMessage(String.format("%s There was an error with your request. Please try again.", BotConfig.noEmoji())).setComponents().queue();
            }
@@ -165,7 +160,7 @@ public class LanguageManager {
         Button englishButton = Button.of(ButtonStyle.PRIMARY, englishButtonId, "English", Emoji.fromUnicode("🇺🇸"));
         Button turkishButton = Button.of(ButtonStyle.PRIMARY, turkishButtonId, "Türkçe", Emoji.fromUnicode("🇹🇷"));
 
-        hook.sendMessage("**Language Selection - Dil Seçimi**\n\n🇺🇸 - Select your language for Emoji bot below.\n\n🇹🇷 - Emoji bot için dil tercihinizi aşağıdan seçebilirsiniz.\n")
+        hook.sendMessage("**Language Selection - Dil Seçimi**\n\n🇺🇸 - Select your language for Emoji bot below.\n\n🇹🇷 - Emoji botun dilini aşağıdan seçebilirsin.\n")
         .setComponents(ActionRow.of(englishButton, turkishButton)).queue();
 
         // Schedule expiration of the buttons
@@ -178,7 +173,7 @@ public class LanguageManager {
             public void run() {
                 MessageEmbed expiredEmbed = new EmbedBuilder()
                 .addField("Buttons Expired", "You can run the command again using /language", true)
-                .setColor(Color.RED)
+                .setColor(BotConfig.getGeneralEmbedColor())
                 .build();
     
 

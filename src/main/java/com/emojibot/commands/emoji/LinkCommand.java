@@ -41,7 +41,7 @@ public class LinkCommand extends Command {
         RichCustomEmoji emojiFromCache = emojiCache.getEmojis(emojiName).stream().findAny().orElse(null);
 
         // User provided the full emoji format, return the link
-        if (emojiFromCache == null && emojiId != null) {
+        if (emojiId != null) {
             String url = emojiInput.contains("<a:") ?
                     String.format("https://cdn.discordapp.com/emojis/%s.gif?&quality=lossless", emojiId) :
                     String.format("https://cdn.discordapp.com/emojis/%s.png?quality=lossless", emojiId);

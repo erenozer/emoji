@@ -56,7 +56,8 @@ public class CommandManager extends ListenerAdapter {
 
                 new PingCommand(bot),
                 new LanguageCommand(bot),
-                new HelpCommand(bot)
+                new HelpCommand(bot),
+                new StartCommand(bot)
         );
     }
 
