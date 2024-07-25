@@ -1,6 +1,5 @@
 package com.emojibot.commands.emoji;
 
-import java.awt.Color;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.events.ButtonListener;
 
-import net.bytebuddy.asm.Advice.Local;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;

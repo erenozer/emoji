@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

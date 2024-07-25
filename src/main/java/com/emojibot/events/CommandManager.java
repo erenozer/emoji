@@ -54,6 +54,7 @@ public class CommandManager extends ListenerAdapter {
                 new LinkCommand(bot),
                 new EmojiInfoCommand(bot),
 
+                new ShardCommand(bot),
                 new PingCommand(bot),
                 new LanguageCommand(bot),
                 new HelpCommand(bot),
@@ -149,7 +150,8 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         if (!USE_GLOBAL_COMMANDS) {
-            registerGuildCommands(event);
+            //if(event.getGuild().getId().equals("368839796703100928"))
+                registerGuildCommands(event);
         } else {
             clearGuildCommands(event);
         }
@@ -158,7 +160,8 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         if (!USE_GLOBAL_COMMANDS) {
-            registerGuildCommands(event);
+            //if(event.getGuild().getId().equals("368839796703100928"))
+                registerGuildCommands(event);
         } else {
             clearGuildCommands(event);
         }
