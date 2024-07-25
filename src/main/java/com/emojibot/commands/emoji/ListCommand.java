@@ -12,8 +12,10 @@ import java.util.TimerTask;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.events.ButtonListener;
 
+import net.bytebuddy.asm.Advice.Local;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -77,10 +79,15 @@ public class ListCommand extends Command {
     @Override
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
+
+        Localization localization = Localization.getLocalization(event.getUser().getId());
+
         List<RichCustomEmoji> emojis = event.getGuild().getEmojiCache().asList();
 
+        
         if(emojis.isEmpty()) {
-            event.getHook().sendMessage(String.format("%s There are no emojis in the server. :^)", BotConfig.infoEmoji())).queue();
+            // Server has no emojis to list
+            event.getHook().sendMessage(String.format(localization.getMsg("list_command", "no_emojis"), BotConfig.infoEmoji())).queue();
             return;
         }
 
@@ -91,6 +98,8 @@ public class ListCommand extends Command {
 
         // Create a unique session id for the validity of the buttons
         String sessionId = ButtonListener.createUniqueId(event.getUser().getId());
+
+        // Put the current status of the buttons in the map with sessionId as key
         currentValues.put(sessionId, new CurrentValues(1, totalPages, pageSize, emojis));
 
         // Show the first page initially
@@ -124,15 +133,18 @@ public class ListCommand extends Command {
             emojiString.append(emojis.get(i).getAsMention()).append(" ");
         }
 
+        // Get the localization for the user
+        Localization localization = Localization.getLocalization(userId);
+
         // Create buttons based on current page
         List<ItemComponent> buttons = new ArrayList<>();
         if (totalPages >= 0) {
             String prevButtonId = sessionId + ":list:previous";
             String nextButtonId = sessionId + ":list:next";
 
-            Button currentPageButton = Button.of(ButtonStyle.SECONDARY, "disabled", String.format("Page %d/%d", currentPage, totalPages), Emoji.fromFormatted(BotConfig.infoEmoji())).withDisabled(true);
-            Button previousButton = Button.of(ButtonStyle.PRIMARY, prevButtonId, "Previous Page", Emoji.fromUnicode("⬅")).withDisabled(currentPage == 1);
-            Button nextButton = Button.of(ButtonStyle.PRIMARY, nextButtonId, "Next Page", Emoji.fromUnicode("➡")).withDisabled(currentPage == totalPages);
+            Button currentPageButton = Button.of(ButtonStyle.SECONDARY, "disabled", String.format(localization.getMsg("list_command", "page"), currentPage, totalPages), Emoji.fromFormatted(BotConfig.infoEmoji())).withDisabled(true);
+            Button previousButton = Button.of(ButtonStyle.PRIMARY, prevButtonId, localization.getMsg("list_command", "previous_page"), Emoji.fromUnicode("⬅")).withDisabled(currentPage == 1);
+            Button nextButton = Button.of(ButtonStyle.PRIMARY, nextButtonId, localization.getMsg("list_command", "next_page"), Emoji.fromUnicode("➡")).withDisabled(currentPage == totalPages);
 
             buttons.add(currentPageButton);
             buttons.add(previousButton);
@@ -143,7 +155,7 @@ public class ListCommand extends Command {
         hook.editOriginal(emojiString.toString()).setComponents(ActionRow.of(buttons)).queue();
     }
 
-    public static void handleNext(ButtonInteractionEvent event) {
+    public static void handleClick(ButtonInteractionEvent event, boolean isNext) {
         event.deferEdit().queue();
 
         String[] contents = event.getComponentId().split(":");
@@ -162,32 +174,15 @@ public class ListCommand extends Command {
         int pageSize = values.getPageSize();
         List<RichCustomEmoji> emojis = values.getEmojis();
 
-        int newPage = currentPage + 1;
-        values.setCurrentPage(newPage);
-        showPage(event, emojis, newPage, totalPages, pageSize, uniqueID);
-    }
+        int newPage = currentPage;
 
-    public static void handlePrevious(ButtonInteractionEvent event) {
-        event.deferEdit().queue();
-
-        String[] contents = event.getComponentId().split(":");
-        // get the UUID:UserId value to get the current state
-        String uniqueID = String.format("%s:%s", contents[0], contents[1]);
-
-        if (!currentValues.containsKey(uniqueID)) {
-            // Old button, ignore
-            return;
+        if(isNext) {
+            newPage++;
+        } else {
+            newPage--;
         }
-        
-        CurrentValues values = currentValues.get(uniqueID);
-        int currentPage = values.getCurrentPage();
-        int totalPages = values.getTotalPages();
-        int pageSize = values.getPageSize();
-        List<RichCustomEmoji> emojis = values.getEmojis();
 
-        int newPage = currentPage - 1;
         values.setCurrentPage(newPage);
-
         showPage(event, emojis, newPage, totalPages, pageSize, uniqueID);
     }
 
@@ -203,10 +198,12 @@ public class ListCommand extends Command {
         if (hook == null) {
             return; // Interaction hook not available
         }
+
+        Localization localization = Localization.getLocalization(event.getUser().getId());
     
         MessageEmbed expiredEmbed = new EmbedBuilder()
-                .addField("Buttons Expired", "You can run the command again with /list", true)
-                .setColor(Color.RED)
+                .addField(localization.getMsg("list_command", "button_expired"), localization.getMsg("list_command", "button_expired_description"), true)
+                .setColor(BotConfig.getGeneralEmbedColor())
                 .build();
     
 

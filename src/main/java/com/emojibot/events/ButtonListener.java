@@ -23,10 +23,10 @@ public class ButtonListener extends ListenerAdapter {
     public ButtonListener(Bot bot) {
         // List command next/previous page buttons
         registerButtonHandler("list:previous", event -> {
-            ListCommand.handlePrevious(event);
+            ListCommand.handleClick(event, false);
         });
         registerButtonHandler("list:next", event -> {
-            ListCommand.handleNext(event);
+            ListCommand.handleClick(event, true);
         });
 
         // Usage terms accept/decline buttons

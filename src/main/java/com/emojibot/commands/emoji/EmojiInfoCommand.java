@@ -2,7 +2,6 @@ package com.emojibot.commands.emoji;
 
 import com.emojibot.commands.utils.Command;
 import com.emojibot.commands.utils.EmojiInput;
-import com.emojibot.commands.utils.language.LanguageManager;
 import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
