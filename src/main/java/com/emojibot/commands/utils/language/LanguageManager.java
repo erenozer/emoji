@@ -165,7 +165,7 @@ public class LanguageManager {
         Button englishButton = Button.of(ButtonStyle.PRIMARY, englishButtonId, "English", Emoji.fromUnicode("🇺🇸"));
         Button turkishButton = Button.of(ButtonStyle.PRIMARY, turkishButtonId, "Türkçe", Emoji.fromUnicode("🇹🇷"));
 
-        hook.sendMessage("🇺🇸 - Select your language for Emoji bot below.\n\n🇹🇷 - Emoji bot için dil tercihinizi aşağıdan seçebilirsinz.\n")
+        hook.sendMessage("**Language Selection - Dil Seçimi**\n\n🇺🇸 - Select your language for Emoji bot below.\n\n🇹🇷 - Emoji bot için dil tercihinizi aşağıdan seçebilirsiniz.\n")
         .setComponents(ActionRow.of(englishButton, turkishButton)).queue();
 
         // Schedule expiration of the buttons
