@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Command {
+public abstract class EmojiCommand {
     public Bot bot;
     public String name;
     public String description;
@@ -19,7 +19,7 @@ public abstract class Command {
     public Permission botPermission; // Permission bot needs to execute this command
     public Integer cooldownDuration;
 
-    public Command(Bot bot) {
+    public EmojiCommand(Bot bot) {
         this.bot = bot;
         this.args = new ArrayList<>();
         this.subCommands = new ArrayList<>();

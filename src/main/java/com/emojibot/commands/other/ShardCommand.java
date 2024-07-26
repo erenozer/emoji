@@ -10,7 +10,7 @@ import java.util.TimerTask;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.events.ButtonListener;
 
@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
-public class ShardCommand extends Command {
+public class ShardCommand extends EmojiCommand {
 
     private static class CurrentValues {
         int currentPage;
@@ -152,6 +152,7 @@ public class ShardCommand extends Command {
         hook.editOriginal(shardString.toString()).setComponents(ActionRow.of(buttons)).queue();
     }
 
+   
     public static void handleClick(ButtonInteractionEvent event, boolean isNext) {
         event.deferEdit().queue();
 

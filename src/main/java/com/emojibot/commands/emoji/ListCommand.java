@@ -10,7 +10,7 @@ import java.util.TimerTask;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.events.ButtonListener;
 
@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 
-public class ListCommand extends Command {
+public class ListCommand extends EmojiCommand {
 
     private static class CurrentValues {
         private int currentPage;

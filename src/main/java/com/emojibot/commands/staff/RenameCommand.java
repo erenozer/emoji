@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.EmojiInput;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
-public class RenameCommand extends Command {
+public class RenameCommand extends EmojiCommand {
 
     public RenameCommand(Bot bot) {
         super(bot);

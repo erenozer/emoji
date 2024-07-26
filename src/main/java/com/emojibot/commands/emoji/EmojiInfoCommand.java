@@ -1,6 +1,6 @@
 package com.emojibot.commands.emoji;
 
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.Bot;
@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 
-public class EmojiInfoCommand extends Command {
+public class EmojiInfoCommand extends EmojiCommand {
     public EmojiInfoCommand(Bot bot) {
         super(bot);
         this.name = "info";

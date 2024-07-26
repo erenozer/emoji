@@ -1,7 +1,7 @@
 package com.emojibot.commands.emoji;
 
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.commands.utils.UsageTerms;
 import com.emojibot.commands.utils.language.Localization;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 //TODO: Limit the number of emoji results to 25
 
-public class SearchCommand extends Command {
+public class SearchCommand extends EmojiCommand {
     private final EmojiCache emojiCache;
 
     public SearchCommand(Bot bot) {

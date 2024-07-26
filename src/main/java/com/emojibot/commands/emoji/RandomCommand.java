@@ -5,7 +5,7 @@ import java.util.Random;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.UsageTerms;
 import com.emojibot.commands.utils.language.Localization;
 
@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public class RandomCommand extends Command {
+public class RandomCommand extends EmojiCommand {
     private EmojiCache emojiCache;
 
     public RandomCommand(Bot bot) {

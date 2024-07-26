@@ -2,7 +2,7 @@ package com.emojibot.commands.staff;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.EmojiInput;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Icon;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class UploadCommand extends Command {
+public class UploadCommand extends EmojiCommand {
 
     public UploadCommand(Bot bot) {
         super(bot);

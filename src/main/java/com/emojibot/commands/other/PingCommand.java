@@ -1,16 +1,16 @@
 package com.emojibot.commands.other;
 
 import com.emojibot.Bot;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class PingCommand extends Command {
+public class PingCommand extends EmojiCommand {
 
     public PingCommand(Bot bot) {
         super(bot);
         this.name = "ping";
-        this.description = "Pong!";
+        this.description = "Pong!!";
         this.cooldownDuration = 6;
     }
 

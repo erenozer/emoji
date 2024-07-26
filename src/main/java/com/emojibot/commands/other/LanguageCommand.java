@@ -1,12 +1,12 @@
 package com.emojibot.commands.other;
 
 import com.emojibot.Bot;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.language.LanguageManager;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class LanguageCommand extends Command {
+public class LanguageCommand extends EmojiCommand {
 
     public LanguageCommand(Bot bot) {
         super(bot);

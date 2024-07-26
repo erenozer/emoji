@@ -2,7 +2,7 @@ package com.emojibot.commands.emoji;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.language.Localization;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class EmojifyCommand extends Command {
+public class EmojifyCommand extends EmojiCommand {
     private static final Map<String, String> mapping = new HashMap<>();
     private static final Map<String, String> turkishToEnglish = new HashMap<>();
 

@@ -3,7 +3,7 @@ package com.emojibot.commands.emoji;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.EmojiInput;
 import com.emojibot.commands.utils.language.Localization;
 
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Objects;
 
-public class LinkCommand extends Command {
+public class LinkCommand extends EmojiCommand {
     private final EmojiCache emojiCache;
 
     public LinkCommand(Bot bot) {

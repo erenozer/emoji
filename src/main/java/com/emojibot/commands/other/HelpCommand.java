@@ -2,7 +2,7 @@ package com.emojibot.commands.other;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.Command;
+import com.emojibot.commands.utils.EmojiCommand;
 import com.emojibot.commands.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
 
-public class HelpCommand extends Command {
+public class HelpCommand extends EmojiCommand {
 
     public HelpCommand(Bot bot) {
         super(bot);
