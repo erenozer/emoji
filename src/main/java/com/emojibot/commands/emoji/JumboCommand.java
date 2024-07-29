@@ -5,26 +5,35 @@ import java.util.Objects;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.utils.Command;
-import com.emojibot.commands.utils.EmojiInput;
-import com.emojibot.commands.utils.language.Localization;
+import com.emojibot.utils.EmojiInput;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 
-public class JumboCommand extends Command {
+public class JumboCommand extends EmojiCommand {
     private EmojiCache emojiCache;
 
     public JumboCommand(Bot bot) {
         super(bot);
         this.name = "jumbo";
         this.description = "Get your emoji as an image, JUMBO version!";
-        this.args.add(new OptionData(OptionType.STRING, "emoji", "Name of the emoji or the emoji itself", true));
+
+        this.localizedNames.put(DiscordLocale.TURKISH, "büyüt");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "İstediğiniz emojiyi büyük olarak görün");
+
+        OptionData option = new OptionData(OptionType.STRING, "emoji", "Name of the emoji or the emoji itself", true);
+        option.setNameLocalization(DiscordLocale.TURKISH, "emoji");
+        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Emoji ismi veya emojinin kendisi");
+
+        this.args.add(option);
         this.cooldownDuration = 4;
         this.emojiCache = bot.getEmojiCache();
     }

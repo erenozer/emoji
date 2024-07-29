@@ -1,4 +1,4 @@
-package com.emojibot.commands.utils;
+package com.emojibot.utils;
 
 import org.bson.Document;
 

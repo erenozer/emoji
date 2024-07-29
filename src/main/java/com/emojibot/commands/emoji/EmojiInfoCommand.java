@@ -1,32 +1,39 @@
 package com.emojibot.commands.emoji;
 
-import com.emojibot.commands.utils.Command;
-import com.emojibot.commands.utils.EmojiInput;
-import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
+import com.emojibot.utils.EmojiInput;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Objects;
 
 
-public class EmojiInfoCommand extends Command {
+public class EmojiInfoCommand extends EmojiCommand {
     public EmojiInfoCommand(Bot bot) {
         super(bot);
         this.name = "info";
         this.description = "Get information about an emoji";
-        this.cooldownDuration = 3;
 
-        OptionData emojiNameArgument = new OptionData(OptionType.STRING, "emoji", "Emoji/name from this server to get it's info", true, false);
-        this.args.add(emojiNameArgument);
+        this.localizedNames.put(DiscordLocale.TURKISH, "bilgi");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "İstediğiniz bir emoji hakkında bilgi verir");
+
+        this.cooldownDuration = 4;
+
+        OptionData option = new OptionData(OptionType.STRING, "emoji", "Emoji/name from this server to get it's info", true, false);
+        option.setNameLocalization(DiscordLocale.TURKISH, "emoji");
+        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Bilgisini almak istediğiniz emoji veya ismi");
+
+        this.args.add(option);
     }
 
     @Override

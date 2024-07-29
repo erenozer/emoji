@@ -2,10 +2,11 @@ package com.emojibot.commands.emoji;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.Command;
-import com.emojibot.commands.utils.language.Localization;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class EmojifyCommand extends Command {
+public class EmojifyCommand extends EmojiCommand {
     private static final Map<String, String> mapping = new HashMap<>();
     private static final Map<String, String> turkishToEnglish = new HashMap<>();
 
@@ -23,8 +24,16 @@ public class EmojifyCommand extends Command {
         this.description = "Emojify your message";
         this.cooldownDuration = 8;
 
-        OptionData emojiNameArgument = new OptionData(OptionType.STRING, "text", "Text to be emojified", true);
-        this.args.add(emojiNameArgument);
+        this.localizedNames.put(DiscordLocale.TURKISH, "yaz");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Mesajınızı emojiler ile yazar");
+
+        OptionData option = new OptionData(OptionType.STRING, "text", "Text to be emojified", true);
+        option.setNameLocalization(DiscordLocale.TURKISH, "yazı");
+        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Emojiler ile yazılacak metin");
+
+        this.args.add(option);
+
+        // Initialize the mapping for Letter -> Emoji
         initializeMapping();
     }
 

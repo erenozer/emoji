@@ -1,9 +1,10 @@
 package com.emojibot;
 
-import com.emojibot.commands.utils.MongoManager;
 import com.emojibot.events.ButtonListener;
 import com.emojibot.events.CommandManager;
 import com.emojibot.events.EventListener;
+import com.emojibot.utils.MongoManager;
+
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;

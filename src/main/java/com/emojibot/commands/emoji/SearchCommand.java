@@ -1,27 +1,25 @@
 package com.emojibot.commands.emoji;
 
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.utils.Command;
-import com.emojibot.commands.utils.EmojiInput;
-import com.emojibot.commands.utils.UsageTerms;
-import com.emojibot.commands.utils.language.Localization;
+import com.emojibot.utils.EmojiInput;
+import com.emojibot.utils.UsageTerms;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-//TODO: Limit the number of emoji results to 25
-
-public class SearchCommand extends Command {
+public class SearchCommand extends EmojiCommand {
     private final EmojiCache emojiCache;
 
     public SearchCommand(Bot bot) {
@@ -31,7 +29,12 @@ public class SearchCommand extends Command {
         this.cooldownDuration = 6;
         this.botPermission = Permission.MESSAGE_EXT_EMOJI;
 
+        this.localizedNames.put(DiscordLocale.TURKISH, "ara");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "İsim ile emojileri arayın, sonuç benzer isimli emojileri de içerebilir!");        
+
         OptionData emojiNameArgument = new OptionData(OptionType.STRING, "name", "Emoji name to be searched", true, false);
+        emojiNameArgument.setNameLocalization(DiscordLocale.TURKISH, "emoji-ismi");
+        emojiNameArgument.setDescriptionLocalization(DiscordLocale.TURKISH, "Aranacak emojinin ismi");
         this.args.add(emojiNameArgument);
         
 

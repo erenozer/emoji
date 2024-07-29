@@ -1,15 +1,15 @@
-package com.emojibot.commands.utils;
+package com.emojibot.utils;
 
 import java.time.Duration;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.awt.Color;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bson.Document;
 
 import com.emojibot.BotConfig;
 import com.emojibot.events.ButtonListener;
+import com.emojibot.utils.language.Localization;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 
@@ -98,14 +98,16 @@ public class UsageTerms {
             timer.cancel();
         }
 
+        Localization localization = Localization.getLocalization(event.getUser().getId());
+
         if(isSuccess) {
             if(option) {
-                event.editMessage(String.format("%s You have acknowledged the disclaimer, you can now use the command.", BotConfig.yesEmoji())).setComponents().queue();
+                event.editMessage(String.format(localization.getMsg("usage_terms", "accepted"), BotConfig.yesEmoji())).setComponents().queue();
             } else {
-                event.editMessage(String.format("%s You have declined the disclaimer, you cannot use this command.", BotConfig.infoEmoji())).setComponents().queue();
+                event.editMessage(String.format(localization.getMsg("usage_terms", "declined"), BotConfig.infoEmoji())).setComponents().queue();
             }
         } else {
-            event.editMessage(String.format("%s There was an error with your request. This may be because you have already accepted this before. You can try the command again.", BotConfig.noEmoji())).setComponents().queue();
+            event.editMessage(String.format(localization.getMsg("usage_terms", "error"), BotConfig.noEmoji())).setComponents().queue();
         }
     }
 
@@ -117,16 +119,18 @@ public class UsageTerms {
     public static void validateTerms(InteractionHook hook) {
         String userId = hook.getInteraction().getUser().getId();
     
+        Localization localization = Localization.getLocalization(userId);
+
         // Session ID will contain uuid:userId
         String sessionId = ButtonListener.createUniqueId(userId);
 
         String declineButtonId = sessionId + ":decline_terms";
         String acceptButtonId = sessionId + ":accept_terms";
 
-        Button declineButton = Button.of(ButtonStyle.DANGER, declineButtonId, "Decline", Emoji.fromFormatted(BotConfig.noEmoji()));
-        Button acceptButton = Button.of(ButtonStyle.SUCCESS, acceptButtonId, "Accept", Emoji.fromFormatted(BotConfig.yesEmoji()));
+        Button declineButton = Button.of(ButtonStyle.DANGER, declineButtonId, localization.getMsg("usage_terms", "decline"), Emoji.fromFormatted(BotConfig.noEmoji()));
+        Button acceptButton = Button.of(ButtonStyle.SUCCESS, acceptButtonId, localization.getMsg("usage_terms", "accept"), Emoji.fromFormatted(BotConfig.yesEmoji()));
 
-        hook.sendMessage(String.format("%s **Disclaimer**\n\nEmojis sent from this command and some other commands of Emoji Bot may cause epileptic seizures for some users.\nBy accepting, you acknowledge that you have been informed of this and accept the terms of usage for all commands of this bot.\n\nUse the buttons below to accept or decline.", BotConfig.infoEmoji()))
+        hook.sendMessage(String.format(localization.getMsg("usage_terms", "desc"), BotConfig.infoEmoji()))
         .setComponents(ActionRow.of(declineButton, acceptButton)).queue();
 
         // Schedule expiration of the buttons
@@ -138,8 +142,8 @@ public class UsageTerms {
             @Override
             public void run() {
                 MessageEmbed expiredEmbed = new EmbedBuilder()
-                .addField("Buttons Expired", "You can run the command again to accept or decline", true)
-                .setColor(Color.RED)
+                .addField(localization.getMsg("usage_terms", "button_expired"), localization.getMsg("usage_terms", "button_expired_desc"), true)
+                .setColor(BotConfig.getGeneralEmbedColor())
                 .build();
     
 

@@ -3,17 +3,18 @@ package com.emojibot.commands.emoji;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.utils.Command;
-import com.emojibot.commands.utils.EmojiInput;
-import com.emojibot.commands.utils.language.Localization;
+import com.emojibot.utils.EmojiInput;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 
-public class SendCommand extends Command {
+public class SendCommand extends EmojiCommand {
     private EmojiCache emojiCache;
 
 
@@ -21,11 +22,18 @@ public class SendCommand extends Command {
         super(bot);
         this.name = "send";
         this.description = "Sends any custom emoji using it's name only";
-        this.args.add(new OptionData(OptionType.STRING, "name", "Name of an emoji to send", true));
+
+        this.localizedNames.put(DiscordLocale.TURKISH, "gönder");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Sadece ismi ile özel bir emoji gönderir");
+
+        OptionData option = new OptionData(OptionType.STRING, "name", "Name of an emoji to send", true);
+        option.setNameLocalization(DiscordLocale.TURKISH, "emoji-ismi");
+        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Gönderilecek emojinin ismi");
+
+        this.args.add(option);
         this.cooldownDuration = 4;
         this.emojiCache = bot.getEmojiCache();
         this.botPermission = Permission.MESSAGE_EXT_EMOJI;
-
     }
 
     @Override

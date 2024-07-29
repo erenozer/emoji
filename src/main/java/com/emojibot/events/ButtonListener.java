@@ -2,8 +2,9 @@ package com.emojibot.events;
 
 import com.emojibot.Bot;
 import com.emojibot.commands.emoji.ListCommand;
-import com.emojibot.commands.utils.UsageTerms;
-import com.emojibot.commands.utils.language.LanguageManager;
+import com.emojibot.commands.other.ShardCommand;
+import com.emojibot.utils.UsageTerms;
+import com.emojibot.utils.language.LanguageManager;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -27,6 +28,13 @@ public class ButtonListener extends ListenerAdapter {
         });
         registerButtonHandler("list:next", event -> {
             ListCommand.handleClick(event, true);
+        });
+
+        registerButtonHandler("shard:previous", event -> {
+            ShardCommand.handleClick(event, false);
+        });
+        registerButtonHandler("shard:next", event -> {
+            ShardCommand.handleClick(event, true);
         });
 
         // Usage terms accept/decline buttons
