@@ -15,7 +15,6 @@ public class EventListener extends ListenerAdapter {
     private static final Dotenv config = Dotenv.configure().load();
     private static final WebhookClient shardHook = WebhookClient.withUrl(config.get("URL_SHARDS_WEBHOOK"));
 
-
     /**
      * Logs when the bot is ready
      * @param event

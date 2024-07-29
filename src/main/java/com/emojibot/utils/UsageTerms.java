@@ -1,4 +1,4 @@
-package com.emojibot.commands.utils;
+package com.emojibot.utils;
 
 import java.time.Duration;
 import java.util.Timer;
@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bson.Document;
 
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.events.ButtonListener;
+import com.emojibot.utils.language.Localization;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 

@@ -10,9 +10,9 @@ import java.util.TimerTask;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.EmojiCommand;
-import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.events.ButtonListener;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
@@ -70,7 +71,11 @@ public class ListCommand extends EmojiCommand {
     public ListCommand(Bot bot) {
         super(bot);
         this.name = "list";
-        this.description = "Lists all emojis in the server with pages";
+
+        this.localizedNames.put(DiscordLocale.TURKISH, "listele");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Sunucudaki bütün emojileri listeler");
+
+        this.description = "Lists all emojis in the server";
         this.cooldownDuration = 30;
     }
 

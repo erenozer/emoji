@@ -5,13 +5,14 @@ import java.util.Random;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.utils.EmojiCommand;
-import com.emojibot.commands.utils.UsageTerms;
-import com.emojibot.commands.utils.language.Localization;
+import com.emojibot.utils.UsageTerms;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -22,8 +23,17 @@ public class RandomCommand extends EmojiCommand {
         super(bot);
         this.name = "random";
         this.description = "Receive random emojis from the bot!";
-        this.args.add(new OptionData(OptionType.INTEGER, "count", "Emoji count, up to 20 emojis at once", false));
         this.cooldownDuration = 4;
+
+        this.localizedNames.put(DiscordLocale.TURKISH, "rastgele");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Rastgele emojiler ile yeni emojiler bulun!");
+
+        OptionData option = new OptionData(OptionType.INTEGER, "count", "Emoji count, up to 20 emojis at once", false);
+        option.setNameLocalization(DiscordLocale.TURKISH, "sayı");
+        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Emoji sayısı, aynı anda en fazla 20 emoji");
+
+        this.args.add(option);
+
         this.emojiCache = bot.getEmojiCache();
         this.botPermission = Permission.MESSAGE_EXT_EMOJI;
     }

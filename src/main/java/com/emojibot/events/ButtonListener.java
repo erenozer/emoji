@@ -3,8 +3,8 @@ package com.emojibot.events;
 import com.emojibot.Bot;
 import com.emojibot.commands.emoji.ListCommand;
 import com.emojibot.commands.other.ShardCommand;
-import com.emojibot.commands.utils.UsageTerms;
-import com.emojibot.commands.utils.language.LanguageManager;
+import com.emojibot.utils.UsageTerms;
+import com.emojibot.utils.language.LanguageManager;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

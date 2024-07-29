@@ -1,4 +1,4 @@
-package com.emojibot.commands.utils.language;
+package com.emojibot.utils.language;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bson.Document;
 
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.MongoManager;
 import com.emojibot.events.ButtonListener;
+import com.emojibot.utils.MongoManager;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 
@@ -65,6 +65,10 @@ public class LanguageManager {
      */
     public static Locale getUserLanguageLocal(String userId) {
         return getLocaleFromLanguageCode(getUserLanguageString(userId));
+    }
+
+    public static boolean isUserLanguageSet(String userId) {
+        return MongoManager.getUserPrefCollection().find(new Document("user_id", userId)).first() != null;
     }
 
     /**
@@ -130,9 +134,9 @@ public class LanguageManager {
 
         if(isSuccess) {
            if(language.equals("en")) {
-                event.editMessage(String.format("%s Your language is set to English.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
+                event.editMessage(String.format("%s Your language is set to English.\n\nCommand names will change according to your Discord client's language.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
               } else if(language.equals("tr")) {
-                event.editMessage(String.format("%s Diliniz Türkçe olarak ayarlandı.\n\n:warning: Bot komutlarının isimleri Discord'un kısıtlamaları sebebiyle İngilizce kalmaya devam edecektir, komutların içerikleri ve mesajları ise Türkçe olacaktır.\n**Komut isimlerinin Türkçe açıklamalarını görmek için /help yazabilirsiniz.**", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
+                event.editMessage(String.format("%s Diliniz Türkçe olarak ayarlandı.\n\nKomut isimleri Discord dilinizle uyumlu olarak değişecektir.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
               } else {
                 event.editMessage(String.format("%s There was an error with your request. Please try again.", BotConfig.noEmoji())).setComponents().queue();
            }
@@ -142,44 +146,43 @@ public class LanguageManager {
     }
 
     /**
-     * This command will NOT check the user status, it will only show the terms and buttons to accept/decline
-     * Make sure to check the user status before running the method
-     * @param userId userId to approve 
+     * Ask the user to select a language with buttons
+     * @param hook InteractionHook object to send the message
      */
     public static void askUserForLanguage(InteractionHook hook) {
         String userId = hook.getInteraction().getUser().getId();
-    
+        
         // Session ID will contain uuid:userId
         String sessionId = ButtonListener.createUniqueId(userId);
-
+    
         String englishButtonId = sessionId + ":language:en";
         String turkishButtonId = sessionId + ":language:tr";
-
+    
         Button englishButton = Button.of(ButtonStyle.PRIMARY, englishButtonId, "English", Emoji.fromUnicode("🇺🇸"));
         Button turkishButton = Button.of(ButtonStyle.PRIMARY, turkishButtonId, "Türkçe", Emoji.fromUnicode("🇹🇷"));
-
-        hook.sendMessage("**Language Selection - Dil Seçimi**\n\n🇺🇸 - Select your language for Emoji bot below.\n\n🇹🇷 - Emoji botun dilini aşağıdan seçebilirsin.\n")
-        .setComponents(ActionRow.of(englishButton, turkishButton)).queue();
-
-        // Schedule expiration of the buttons
-        Timer timer = new Timer();
-
-        sessionTimers.put(sessionId, timer); // Store the timer in the map
-
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                MessageEmbed expiredEmbed = new EmbedBuilder()
-                .addField("Buttons Expired", "You can run the command again using /language", true)
-                .setColor(BotConfig.getGeneralEmbedColor())
-                .build();
     
-
-                // Remove the buttons
-                hook.editOriginalEmbeds(expiredEmbed).setComponents().queue(); 
-            }
-        }, Duration.ofSeconds(30).toMillis());
+        // Send the message and capture the Message object to edit the latest message, not the previous message
+        // which can be sent due to user not having a supported language, (see CommandManager->onSlashCommandInteraction)
+        hook.sendMessage("**Language Selection - Dil Seçimi**\n\n🇺🇸 - Select your language for Emoji bot below.\n\n🇹🇷 - Emoji botun dilini aşağıdan seçebilirsin.\n")
+            .setComponents(ActionRow.of(englishButton, turkishButton))
+            .queue(message -> {
+                // Schedule expiration of the buttons
+                Timer timer = new Timer();
+                sessionTimers.put(sessionId, timer); // Store the timer in the map
+    
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        MessageEmbed expiredEmbed = new EmbedBuilder()
+                            .addField("Buttons Expired - Butonların Süresi Doldu", "Run the command again to set your language  \nKomutu tekrar kullanarak dilinizi ayarlayabilirsiniz", true)
+                            .setColor(BotConfig.getGeneralEmbedColor())
+                            .build();
+    
+                        // Remove the buttons and edit the message
+                        message.editMessageEmbeds(expiredEmbed).setComponents().queue();
+                    }
+                }, Duration.ofSeconds(30).toMillis());
+            });
     }
-
 
 }

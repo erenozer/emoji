@@ -5,12 +5,13 @@ import com.emojibot.BotConfig;
 import com.emojibot.commands.emoji.*;
 import com.emojibot.commands.other.*;
 import com.emojibot.commands.staff.*;
-import com.emojibot.commands.utils.EmojiCommand;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.LanguageManager;
+import com.emojibot.utils.language.Localization;
 
 import club.minnced.discord.webhook.WebhookClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -22,6 +23,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,9 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /* 
-! Read the warning comment on the commandsDiffer function for information about updating global commands. 
+! Read the comment on the commandsDiffer function for information about updating global commands. 
 */
-
 
 public class CommandManager extends ListenerAdapter {
     public static final ArrayList<EmojiCommand> commands = new ArrayList<>();
@@ -57,8 +58,8 @@ public class CommandManager extends ListenerAdapter {
             new ShardCommand(bot),
             new PingCommand(bot),
             new LanguageCommand(bot),
-            new HelpCommand(bot),
-            new StartCommand(bot)
+            new CommandsCommand(bot),
+            new HelpCommand(bot)
         );
     }
 
@@ -80,11 +81,16 @@ public class CommandManager extends ListenerAdapter {
     public static List<CommandData> unpackCommandData() {
         List<CommandData> commandData = new ArrayList<>();
         for (EmojiCommand command : commands) {
-            SlashCommandData slashCommand = Commands.slash(command.name, command.description)
-                .addOptions(command.args);
+            SlashCommandData slashCommand = Commands.slash(command.name, command.description).addOptions(command.args);
+
+            // Localize command name and description
+            command.localizedNames.forEach(slashCommand::setNameLocalization);
+            command.localizedDescriptions.forEach(slashCommand::setDescriptionLocalization);
+
             if (command.permission != null) {
                 slashCommand.setDefaultPermissions(DefaultMemberPermissions.enabledFor(command.permission));
             }
+
             if (!command.subCommands.isEmpty()) {
                 slashCommand.addSubcommands(command.subCommands);
             }
@@ -101,29 +107,67 @@ public class CommandManager extends ListenerAdapter {
         EmojiCommand command = commandsMap.get(event.getName());
         if (command != null) {
             String userId = event.getUser().getId();
+
+            // Check if the user is on cooldown
             if (command.cooldownDuration != null && command.cooldownDuration > 0) {
                 if (cooldownManager.isOnCooldown(userId, command.name, command.cooldownDuration)) {
+                    // Check if the user has been warned about the cooldown
                     if (!cooldownManager.hasBeenWarned(userId, command.name)) {
+                        // Not warned yet, warn the user about the cooldown
+                        Localization localization = Localization.getLocalization(userId);
+
                         long remainingCooldown = cooldownManager.getRemainingCooldown(userId, command.name, command.cooldownDuration);
-                        event.reply(String.format(":turtle: You are on **cooldown**! Please wait %d second(s) before using this command again, further attempts will be ignored.", remainingCooldown))
+                        event.reply(String.format(localization.getMsg("command_manager", "cooldown_warning"), remainingCooldown))
                             .setEphemeral(true)
                             .queue();
                         cooldownManager.warnUser(userId, command.name);
                     }
+                    // User has already been warned, do not run the command
                     return;
                 } else {
+                    // Not on cooldown, reset the cooldown and run the command
                     cooldownManager.setCooldown(userId, command.name);
                 }
             }
 
-            Role botRole = event.getGuild().getBotRole();
-            if (botRole != null && command.botPermission != null) {
-                if (!botRole.hasPermission(command.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
-                    event.reply(String.format(":information_source: I need **%s** permission to run that command. Please give the specified permission to one of my roles.", command.botPermission.getName())).setEphemeral(true).queue();
+            // Check the permissions of the bot for required permissions
+            var selfMember = event.getGuild().getSelfMember();
+
+            if (command.botPermission != null) {
+                if (!selfMember.hasPermission(command.botPermission) && !selfMember.hasPermission(Permission.ADMINISTRATOR)) {
+                    Localization localization = Localization.getLocalization(userId);
+
+                    event.reply(String.format(localization.getMsg("command_manager", "required_perms"), command.botPermission.getName())).setEphemeral(true).queue();
                     return;
                 }
             }
 
+            // If user has not set a language, try to set it based on the user's locale
+            // If the user's locale is not supported, ask the user to set a language
+            if(!LanguageManager.isUserLanguageSet(userId)) {
+                DiscordLocale userLocale = event.getUserLocale();
+
+                switch(userLocale) {
+                    case ENGLISH_US:
+                        LanguageManager.setUserLanguage(userId, "en");
+                        break;
+                    case ENGLISH_UK:
+                        LanguageManager.setUserLanguage(userId, "en");
+                        break;
+                    case TURKISH:
+                        LanguageManager.setUserLanguage(userId, "tr");
+                        break;
+                    default:
+                        event.deferReply().queue();
+
+                        event.getHook().sendMessage("Your language seems to not be supported by Emoji bot. You can select one of the supported languages below.").setEphemeral(true).queue();
+
+                        LanguageManager.askUserForLanguage(event.getHook());
+                        return;
+                }
+            }
+            
+            // Try to run the command and catch any exceptions
             try {
                 command.run(event);
             } catch (Exception e) {
@@ -135,6 +179,7 @@ public class CommandManager extends ListenerAdapter {
 
                 e.printStackTrace();
 
+                // Send the error message to the logs channel with the webhook
                 try (WebhookClient client = WebhookClient.withUrl(config.get("URL_LOGS_WEBHOOK"))) {
                     String errMessage = String.format(":warning: Unhandled exception with command %s at guild %s (%s), by user %s (%s):\n```%s```", event.getName(), event.getGuild().getName(), event.getGuild().getId(), event.getUser().getAsMention(), event.getUser().getId(), e.getMessage());
                     client.send(errMessage);
@@ -184,16 +229,16 @@ public class CommandManager extends ListenerAdapter {
     }
 
     /*
-     ! Warning to self: commandsDiffer method does NOT check for updates to the command's permissions, it only checks the command's name, description, and options. 
+     ! Warning: commandsDiffer method does NOT check for updates to the command's permissions, it only checks the command's name, description, and options. 
      ! So for some reason, if you just change the permissions of a command, manually update some random value in any command to trigger an update.
-     */
+    */
 
-     /**
-      * Compares the existing commands with the new commands to determine if they differ.
-      * @param existingCommands 
-      * @param newCommands 
-      * @return
-      */
+    /**
+    * Compares the existing commands with the new commands to determine if they differ.
+    * @param existingCommands 
+    * @param newCommands 
+    * @return true if the commands differ by name, description or options
+    */
     private boolean commandsDiffer(List<Command> existingCommands, ArrayList<EmojiCommand> newCommands) {
         System.out.println("Comparing command sizes: existing = " + existingCommands.size() + ", new = " + newCommands.size());
     
@@ -226,7 +271,7 @@ public class CommandManager extends ListenerAdapter {
      * Compares the existing options with the new options to determine if they differ.
      * @param existingOptions
      * @param newOptions
-     * @return
+     * @return true if options are identical
      */
     private boolean compareOptions(List<Command.Option> existingOptions, List<OptionData> newOptions) {
         //System.out.println("Comparing option sizes: existing = " + existingOptions.size() + ", new = " + newOptions.size());
@@ -261,6 +306,8 @@ public class CommandManager extends ListenerAdapter {
         //System.out.println("Options are identical.");
         return true;
     }
+
+
 
     // GUILD COMMAND REGISTRY - Testing purposes only //
 

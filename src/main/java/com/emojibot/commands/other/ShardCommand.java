@@ -10,9 +10,9 @@ import java.util.TimerTask;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.commands.utils.EmojiCommand;
-import com.emojibot.commands.utils.language.Localization;
 import com.emojibot.events.ButtonListener;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
@@ -70,6 +71,10 @@ public class ShardCommand extends EmojiCommand {
         super(bot);
         this.name = "shard";
         this.description = "Displays the shards of the bot";
+
+        this.localizedNames.put(DiscordLocale.TURKISH, "shard");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Botun shard detaylarını gösterir");
+
         this.cooldownDuration = 20;
     }
 

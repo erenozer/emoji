@@ -1,9 +1,10 @@
 package com.emojibot;
 
-import com.emojibot.commands.utils.MongoManager;
 import com.emojibot.events.ButtonListener;
 import com.emojibot.events.CommandManager;
 import com.emojibot.events.EventListener;
+import com.emojibot.utils.MongoManager;
+
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -42,7 +43,7 @@ public class Bot {
             // Blue emoji color - 0xa7cfe2
 
             DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createLight(getToken())
-                    .setStatus(OnlineStatus.OFFLINE)
+                    .setStatus(OnlineStatus.ONLINE)
                     .setActivity(Activity.watching("/start to get started with Emoji!"))
                     .setMemberCachePolicy(MemberCachePolicy.NONE)
                     .enableCache(CacheFlag.EMOJI, CacheFlag.ROLE_TAGS)

@@ -1,4 +1,4 @@
-package com.emojibot.commands.utils.language;
+package com.emojibot.utils.language;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

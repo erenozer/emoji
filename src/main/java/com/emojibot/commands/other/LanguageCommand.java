@@ -1,18 +1,22 @@
 package com.emojibot.commands.other;
 
 import com.emojibot.Bot;
-import com.emojibot.commands.utils.EmojiCommand;
-import com.emojibot.commands.utils.language.LanguageManager;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.LanguageManager;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 
 public class LanguageCommand extends EmojiCommand {
 
     public LanguageCommand(Bot bot) {
         super(bot);
         this.name = "language";
-        this.description = "Change the language of the bot - Botun dilini değiştirir!";
+        this.description = "Change the language of Emoji bot manually";
         this.cooldownDuration = 5;
+
+        this.localizedNames.put(DiscordLocale.TURKISH, "dil");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Botun dilini değiştirmenizi sağlar");
     }
 
     @Override

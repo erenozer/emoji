@@ -3,12 +3,13 @@ package com.emojibot.commands.emoji;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
-import com.emojibot.commands.utils.EmojiCommand;
-import com.emojibot.commands.utils.EmojiInput;
-import com.emojibot.commands.utils.language.Localization;
+import com.emojibot.utils.EmojiInput;
+import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -23,8 +24,14 @@ public class LinkCommand extends EmojiCommand {
         this.description = "Get the image link of an emoji";
         this.cooldownDuration = 2;
 
-        OptionData emojiArgument = new OptionData(OptionType.STRING, "emoji", "Name of the emoji or the emoji itself", true);
-        this.args.add(emojiArgument);
+        this.localizedNames.put(DiscordLocale.TURKISH, "bağlantı");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Bir emojinin bağlantısını verir");
+
+        OptionData option = new OptionData(OptionType.STRING, "emoji", "Name of the emoji or the emoji itself", true);
+        option.setNameLocalization(DiscordLocale.TURKISH, "emoji");
+        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Emoji ismi veya emojinin kendisi");
+
+        this.args.add(option);
 
         this.emojiCache = bot.getEmojiCache();
     }
