@@ -8,7 +8,9 @@ group = "com.emojibot"
 version = "1.1"
 
 repositories {
-    mavenCentral()
+    mavenCentral() ;
+    maven { url = uri("https://jitpack.io") }
+    
 }
 
 
@@ -29,6 +31,9 @@ dependencies {
 
     // webhooks for logs
     implementation("club.minnced:discord-webhooks:0.8.4")
+
+    // top.gg 
+    implementation("org.discordbots:DBL-Java-Library:2.1.2")
 
 }
 

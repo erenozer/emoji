@@ -6,6 +6,7 @@ import com.emojibot.utils.command.EmojiCommand;
 import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -26,6 +27,7 @@ public class HelpCommand extends EmojiCommand {
         this.localizedNames.put(DiscordLocale.TURKISH, "yardım");
         this.localizedDescriptions.put(DiscordLocale.TURKISH, "Kullanılabilir komutlar hakkında bilgi alın!");
     
+        this.botPermission = Permission.MESSAGE_EMBED_LINKS;
     }
 
     @Override
@@ -34,8 +36,6 @@ public class HelpCommand extends EmojiCommand {
 
         Localization localization = Localization.getLocalization(event.getUser().getId());
         
-        
-
         MessageEmbed helpEmbed = new EmbedBuilder()
         .setAuthor(localization.getMsg("help_command", "hi_there"), "https://discord.com/oauth2/authorize?client_id=414878659267133445")
         //.setDescription("[Add me to your server!](https://discord.com/oauth2/authorize?client_id=414878659267133445)\nYou can find new emojis, search for emojis, and more!\nStart typing **/** (slash) to use my commands.\n\n[Need some help? Click here.](https://discord.gg/U5v2csS)")
