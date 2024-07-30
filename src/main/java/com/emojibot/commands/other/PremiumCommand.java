@@ -1,8 +1,11 @@
 package com.emojibot.commands.other;
 
 import java.awt.Color;
+import java.util.Objects;
 
 import com.emojibot.Bot;
+import com.emojibot.BotConfig;
+import com.emojibot.utils.PremiumManager;
 import com.emojibot.utils.command.EmojiCommand;
 import com.emojibot.utils.language.Localization;
 
@@ -11,6 +14,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
@@ -26,13 +31,36 @@ public class PremiumCommand extends EmojiCommand {
         this.localizedNames.put(DiscordLocale.TURKISH, "premium");
         this.localizedDescriptions.put(DiscordLocale.TURKISH, "Emoji'nin premium özellikleri hakkında bilgi alın!");
     
+        OptionData option = new OptionData(OptionType.STRING, "hey", "Hey there, this is not a very useful argument.", false);
+        option.setNameLocalization(DiscordLocale.TURKISH, "selam");
+        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Selam, bu çok kullanışlı bir şeye benzemiyor?");
+
+        this.args.add(option);
+
     }
+
 
     @Override
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
+        // If the user is an admin and the command is run on Emoji Bot server and an argument (server ID) is provided
+        if(BotConfig.getAdminIds().contains(event.getUser().getId()) && event.getGuild().getId().equals("232918641866178560") && event.getOptions().size() > 0) {
+            // Admin control for premium servers
+            var serverIdInput = event.getOption("hey").getAsString();
+
+            PremiumManager.askForConfirmation(event.getHook(), serverIdInput);
+
+            return;
+        }
+
         Localization localization = Localization.getLocalization(event.getUser().getId());
+
+        // Check if the server has premium enabled, if so, inform the user and send the premium information
+        var serverPremiumStatus = PremiumManager.getPremiumStatus(event.getGuild().getId());
+        if(serverPremiumStatus) {
+            event.getHook().sendMessage(localization.getMsg("premium_command", "premium_enabled")).queue();
+        }
 
         MessageEmbed helpEmbed = new EmbedBuilder()
         .setAuthor(localization.getMsg("premium_command", "title"), "https://buymeacoffee.com/erenozer")

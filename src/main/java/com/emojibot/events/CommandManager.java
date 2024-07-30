@@ -318,7 +318,7 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         // Only register guild commands for the test server
-        if (event.getGuild().getId().equals("368839796703100928")) {
+        if (event.getGuild().getId().equals("368839796703100928") || event.getGuild().getId().equals("232918641866178560")) {
             if (!USE_GLOBAL_COMMANDS) {
                 registerGuildCommands(event);
             } else {
@@ -328,12 +328,12 @@ public class CommandManager extends ListenerAdapter {
     }
     
     /**
-     * For registering guild commands only on the Emoji Tests server.
+     * For registering guild commands for testing purposes only.
      */
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
-         // Only register guild commands for the test server
-         if (event.getGuild().getId().equals("368839796703100928")) {
+         // Only register guild commands to Emoji Tests & Emoji Bot server
+         if (event.getGuild().getId().equals("368839796703100928") || event.getGuild().getId().equals("232918641866178560")) {
             if (!USE_GLOBAL_COMMANDS) {
                 registerGuildCommands(event);
             } else {

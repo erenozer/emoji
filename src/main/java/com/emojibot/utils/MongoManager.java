@@ -50,4 +50,13 @@ public class MongoManager {
             return null;
         }
     }
+
+    public static MongoCollection<Document> getServersCollection() {
+        try {
+            return getDatabase().getCollection("servers");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 
@@ -53,5 +55,9 @@ public class BotConfig {
  
     public static boolean getUseGlobalCommands() {
         return Boolean.parseBoolean(properties.getProperty("USE_GLOBAL_COMMANDS"));
+    }
+
+    public static ArrayList<String> getAdminIds() {
+        return new ArrayList<>(Arrays.asList(properties.getProperty("ADMINS").split(",")));
     }
 }

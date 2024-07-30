@@ -20,8 +20,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -108,9 +110,17 @@ public class ShardCommand extends EmojiCommand {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                expireSession(sessionId, event);
+                try {
+                    expireSession(sessionId, event);
+                } catch (ErrorResponseException e) {
+                    if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                        System.out.println("The message was deleted or not found, cannot update.");
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }, Duration.ofSeconds(150).toMillis());
+        }, Duration.ofSeconds(140).toMillis());
     }
 
     private static void showPage(SlashCommandInteractionEvent event, List<JDA> shards, int currentPage, int totalPages, int pageSize, String sessionId) {
@@ -208,9 +218,16 @@ public class ShardCommand extends EmojiCommand {
                 .addField(localization.getMsg("shard_command", "button_expired"), localization.getMsg("shard_command", "button_expired_desc"), true)
                 .setColor(BotConfig.getGeneralEmbedColor())
                 .build();
-
+        try {
         // Remove the buttons
-        hook.editOriginalEmbeds(expiredEmbed).setComponents().queue();
+            hook.editOriginalEmbeds(expiredEmbed).setComponents().queue(null, throwable -> ButtonListener.handleQueueError(throwable, "Could not edit message: message not found or deleted"));
+        } catch (ErrorResponseException e) {
+            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                System.out.println("The message was deleted or not found, cannot update.");
+            } else {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static String formatShardStatus(JDA.Status status) {

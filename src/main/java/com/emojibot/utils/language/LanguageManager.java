@@ -18,10 +18,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 
 public class LanguageManager {
@@ -86,11 +88,6 @@ public class LanguageManager {
         }
     }
 
-    /**
-     * Update user approval status with the given boolean as an argument
-     * @param userId ID of the user to update status
-     * @param newStatus new approval status of the user in the database
-     */
     public static boolean setUserLanguage(String userId, String newLanguage) {
         // Get the usage terms collection
         MongoCollection<Document> collection = MongoManager.getUserPrefCollection();
@@ -131,17 +128,25 @@ public class LanguageManager {
         if (timer != null) {
             timer.cancel();
         }
-
-        if(isSuccess) {
-           if(language.equals("en")) {
-                event.editMessage(String.format("%s Your language is set to English.\n\nCommand names will change according to your Discord client's language.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
-              } else if(language.equals("tr")) {
-                event.editMessage(String.format("%s Diliniz Türkçe olarak ayarlandı.\n\nKomut isimleri Discord dilinizle uyumlu olarak değişecektir.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
-              } else {
-                event.editMessage(String.format("%s There was an error with your request. Please try again.", BotConfig.noEmoji())).setComponents().queue();
-           }
-        } else {
-            event.editMessage(String.format("%s There was an error with your request.", BotConfig.noEmoji())).setComponents().queue();
+        try {
+            if(isSuccess) {
+            if(language.equals("en")) {
+                    event.editMessage(String.format("%s Your language is set to English.\n\nCommand names will change according to your Discord client's language.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
+                } else if(language.equals("tr")) {
+                    event.editMessage(String.format("%s Diliniz Türkçe olarak ayarlandı.\n\nKomut isimleri Discord dilinizle uyumlu olarak değişecektir.", BotConfig.yesEmoji(), event.getUser().getEffectiveName())).setComponents().queue();
+                } else {
+                    event.editMessage(String.format("%s There was an error with your request. Please try again.", BotConfig.noEmoji())).setComponents().queue();
+                }
+            } else {
+                event.editMessage(String.format("%s There was an error with your request.", BotConfig.noEmoji())).setComponents().queue();
+            } 
+        } catch (ErrorResponseException e) {
+            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                // The message was deleted or not found
+                System.out.println("The message was deleted or not found, cannot update.");
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -178,8 +183,16 @@ public class LanguageManager {
                             .setColor(BotConfig.getGeneralEmbedColor())
                             .build();
     
-                        // Remove the buttons and edit the message
-                        message.editMessageEmbeds(expiredEmbed).setComponents().queue();
+                        try {
+                            // Remove the buttons
+                            message.editMessageEmbeds(expiredEmbed).setComponents().queue(null, throwable -> ButtonListener.handleQueueError(throwable, "Could not edit message: message not found or deleted"));
+                        } catch (ErrorResponseException e) {
+                            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                                System.out.println("The message was deleted or not found, cannot update.");
+                            } else {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }, Duration.ofSeconds(30).toMillis());
             });

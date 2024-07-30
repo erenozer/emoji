@@ -17,10 +17,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 public class UsageTerms {
     private static final ConcurrentHashMap<String, Timer> sessionTimers = new ConcurrentHashMap<>();
@@ -99,15 +101,23 @@ public class UsageTerms {
         }
 
         Localization localization = Localization.getLocalization(event.getUser().getId());
-
-        if(isSuccess) {
-            if(option) {
-                event.editMessage(String.format(localization.getMsg("usage_terms", "accepted"), BotConfig.yesEmoji())).setComponents().queue();
+        try {
+            if(isSuccess) {
+                if(option) {
+                    event.editMessage(String.format(localization.getMsg("usage_terms", "accepted"), BotConfig.yesEmoji())).setComponents().queue();
+                } else {
+                    event.editMessage(String.format(localization.getMsg("usage_terms", "declined"), BotConfig.infoEmoji())).setComponents().queue();
+                }
             } else {
-                event.editMessage(String.format(localization.getMsg("usage_terms", "declined"), BotConfig.infoEmoji())).setComponents().queue();
+                event.editMessage(String.format(localization.getMsg("usage_terms", "error"), BotConfig.noEmoji())).setComponents().queue();
             }
-        } else {
-            event.editMessage(String.format(localization.getMsg("usage_terms", "error"), BotConfig.noEmoji())).setComponents().queue();
+        } catch (ErrorResponseException e) {
+            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                // The message was deleted or not found
+                System.out.println("The message was deleted or not found, cannot update.");
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -146,10 +156,18 @@ public class UsageTerms {
                 .setColor(BotConfig.getGeneralEmbedColor())
                 .build();
     
-
-                // Remove the buttons
-                hook.editOriginalEmbeds(expiredEmbed).setComponents().queue(); 
+                try {
+                    // Remove the buttons
+                    hook.editOriginalEmbeds(expiredEmbed).setComponents().queue(null, throwable -> ButtonListener.handleQueueError(throwable, "Could not edit message: message not found or deleted"));
+                } catch (ErrorResponseException e) {
+                    if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                        System.out.println("The message was deleted or not found, cannot update.");
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
             }
         }, Duration.ofSeconds(30).toMillis());
     }
+    
 }
