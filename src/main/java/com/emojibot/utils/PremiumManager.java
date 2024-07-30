@@ -2,7 +2,6 @@ package com.emojibot.utils;
 
 import java.awt.Color;
 import java.time.Duration;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;

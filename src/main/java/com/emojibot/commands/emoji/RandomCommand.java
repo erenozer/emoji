@@ -5,6 +5,7 @@ import java.util.Random;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
+import com.emojibot.utils.PremiumManager;
 import com.emojibot.utils.UsageTerms;
 import com.emojibot.utils.command.EmojiCommand;
 import com.emojibot.utils.command.TopggManager;
@@ -44,12 +45,14 @@ public class RandomCommand extends EmojiCommand {
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        Localization localization = Localization.getLocalization(event.getUser().getId());
+        String userId = event.getUser().getId();
+
+        Localization localization = Localization.getLocalization(userId);
 
         TopggManager topggManager = bot.getTopggManager();
         
-        if(!topggManager.hasVoted(event.getUser().getId())) {
-            // User has not voted, send the vote embed 
+        if(!topggManager.hasVoted(userId) && !PremiumManager.getPremiumStatus(event.getGuild().getId())) {
+            // User has not voted and the server is not premium, ask for vote
             TopggManager.sendVoteEmbed(event.getHook(), localization);
             return;
         }
