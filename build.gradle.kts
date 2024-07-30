@@ -44,7 +44,6 @@ tasks.test {
 // fat Jar file to run the bot (includes all the dependencies)
 tasks.shadowJar {
     archiveBaseName.set("emojibot")
-    archiveClassifier.set("") // Removes the '-all' suffix
     archiveVersion.set("1.1") // Version
 }
 
