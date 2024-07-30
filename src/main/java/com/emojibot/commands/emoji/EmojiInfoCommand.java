@@ -7,6 +7,7 @@ import com.emojibot.utils.command.EmojiCommand;
 import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -34,6 +35,9 @@ public class EmojiInfoCommand extends EmojiCommand {
         option.setDescriptionLocalization(DiscordLocale.TURKISH, "Bilgisini almak istediğiniz emoji veya ismi");
 
         this.args.add(option);
+
+        this.botPermission = Permission.MESSAGE_EMBED_LINKS;
+
     }
 
     @Override

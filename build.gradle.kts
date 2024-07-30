@@ -8,7 +8,9 @@ group = "com.emojibot"
 version = "1.1"
 
 repositories {
-    mavenCentral()
+    mavenCentral() ;
+    maven { url = uri("https://jitpack.io") }
+    
 }
 
 
@@ -30,6 +32,9 @@ dependencies {
     // webhooks for logs
     implementation("club.minnced:discord-webhooks:0.8.4")
 
+    // top.gg 
+    implementation("org.discordbots:DBL-Java-Library:2.1.2")
+
 }
 
 tasks.test {
@@ -39,7 +44,6 @@ tasks.test {
 // fat Jar file to run the bot (includes all the dependencies)
 tasks.shadowJar {
     archiveBaseName.set("emojibot")
-    archiveClassifier.set("") // Removes the '-all' suffix
     archiveVersion.set("1.1") // Version
 }
 

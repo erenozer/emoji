@@ -6,6 +6,7 @@ import com.emojibot.utils.command.EmojiCommand;
 import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -25,6 +26,8 @@ public class CommandsCommand extends EmojiCommand {
 
         this.localizedNames.put(DiscordLocale.TURKISH, "komutlar");
         this.localizedDescriptions.put(DiscordLocale.TURKISH, "Komutların açıklamalarını gösterir");
+
+        this.botPermission = Permission.MESSAGE_EMBED_LINKS;
     
     }
 

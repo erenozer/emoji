@@ -20,8 +20,10 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -112,9 +114,17 @@ public class ListCommand extends EmojiCommand {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                expireSession(sessionId, event);
+                try {
+                    expireSession(sessionId, event);
+                 } catch (ErrorResponseException e) {
+                    if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                        System.out.println("The message was deleted or not found, cannot update.");
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }, Duration.ofMinutes(2).toMillis());
+        }, Duration.ofSeconds(120).toMillis());
     }
 
     private static void showPage(SlashCommandInteractionEvent event, List<RichCustomEmoji> emojis, int currentPage, int totalPages, int pageSize, String sessionId) {
@@ -211,6 +221,14 @@ public class ListCommand extends EmojiCommand {
     
 
         // Remove the buttons
-        hook.editOriginalEmbeds(expiredEmbed).setComponents().queue(); 
+        try {
+            hook.editOriginalEmbeds(expiredEmbed).setComponents().queue(null, throwable -> ButtonListener.handleQueueError(throwable, "Could not edit message: message not found or deleted"));
+        } catch (ErrorResponseException e) {
+            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                System.out.println("The message was deleted or not found, cannot update.");
+            } else {
+                e.printStackTrace();
+            }
+        }
     }
 }

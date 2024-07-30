@@ -4,6 +4,7 @@ import com.emojibot.events.ButtonListener;
 import com.emojibot.events.CommandManager;
 import com.emojibot.events.EventListener;
 import com.emojibot.utils.MongoManager;
+import com.emojibot.utils.command.TopggManager;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -19,6 +20,8 @@ public class Bot {
     private static final Dotenv config = Dotenv.configure().load();
     private ShardManager shardManager;
     private final EmojiCache emojiCache = new EmojiCache();
+    private final TopggManager topggManager = new TopggManager();
+
 
     public String getToken() {
         if (BotConfig.getDevMode())
@@ -53,6 +56,7 @@ public class Bot {
 
             shardManager = builder.build();
 
+
             // Shutdown hook to disconnect from MongoDB
             Runtime.getRuntime().addShutdownHook(new Thread(MongoManager::disconnect));
 
@@ -73,6 +77,10 @@ public class Bot {
 
     public EmojiCache getEmojiCache() {
         return emojiCache;
+    }
+
+    public TopggManager getTopggManager() {
+        return topggManager;
     }
 
     public static void main(String[] args) {

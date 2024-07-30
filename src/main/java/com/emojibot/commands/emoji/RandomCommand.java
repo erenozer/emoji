@@ -7,6 +7,7 @@ import com.emojibot.BotConfig;
 import com.emojibot.EmojiCache;
 import com.emojibot.utils.UsageTerms;
 import com.emojibot.utils.command.EmojiCommand;
+import com.emojibot.utils.command.TopggManager;
 import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.Permission;
@@ -43,14 +44,22 @@ public class RandomCommand extends EmojiCommand {
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
+        Localization localization = Localization.getLocalization(event.getUser().getId());
+
+        TopggManager topggManager = bot.getTopggManager();
+        
+        if(!topggManager.hasVoted(event.getUser().getId())) {
+            // User has not voted, send the vote embed 
+            TopggManager.sendVoteEmbed(event.getHook(), localization);
+            return;
+        }
+
         // Check for usage terms 
         if(UsageTerms.checkUserStatus(event.getUser().getId()) != 1) {
             // User has not accepted the terms
             UsageTerms.validateTerms(event.getHook());
             return;
         }
-            
-        Localization localization = Localization.getLocalization(event.getUser().getId());
 
         var countInput = event.getOption("count");
         if(countInput != null) {

@@ -3,11 +3,14 @@ package com.emojibot.events;
 import com.emojibot.Bot;
 import com.emojibot.commands.emoji.ListCommand;
 import com.emojibot.commands.other.ShardCommand;
+import com.emojibot.utils.PremiumManager;
 import com.emojibot.utils.UsageTerms;
 import com.emojibot.utils.language.LanguageManager;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +62,18 @@ public class ButtonListener extends ListenerAdapter {
             boolean result = LanguageManager.setUserLanguage(event.getUser().getId(), "tr");
 
             LanguageManager.handleClick(event, result, "tr");
+        });
+
+        // Premium admin buttons for server premium status
+        registerButtonHandler("premium:disable", event -> {
+            boolean result = PremiumManager.setServerPremium(event.getGuild().getId(), false);
+            
+            PremiumManager.handleClick(event, result, false);
+        });
+        registerButtonHandler("premium:enable", event -> {
+            boolean result = PremiumManager.setServerPremium(event.getGuild().getId(), true);
+
+            PremiumManager.handleClick(event, result, true);
         });
 
     }
@@ -115,4 +130,17 @@ public class ButtonListener extends ListenerAdapter {
         return id.toString();
     }
 
+    public static void handleQueueError(Throwable throwable, String logMessage) {
+        if (throwable instanceof ErrorResponseException) {
+            ErrorResponseException e = (ErrorResponseException) throwable;
+            if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
+                // The message was deleted or not found, not printing stack trace for this
+                System.out.println(logMessage);
+            } else {
+                e.printStackTrace();
+            }
+        } else {
+            throwable.printStackTrace();
+        }
+    }
 }
