@@ -3,9 +3,9 @@ package com.emojibot.commands.other;
 import java.awt.Color;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.utils.PremiumManager;
+import com.emojibot.utils.Localization;
+import com.emojibot.utils.button_listeners.PremiumManager;
 import com.emojibot.utils.command.EmojiCommand;
-import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;

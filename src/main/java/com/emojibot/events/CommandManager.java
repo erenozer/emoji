@@ -4,10 +4,11 @@ import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.commands.emoji.*;
 import com.emojibot.commands.other.*;
+import com.emojibot.commands.premium.HideCommand;
 import com.emojibot.commands.staff.*;
+import com.emojibot.utils.Localization;
+import com.emojibot.utils.button_listeners.LanguageManager;
 import com.emojibot.utils.command.EmojiCommand;
-import com.emojibot.utils.language.LanguageManager;
-import com.emojibot.utils.language.Localization;
 
 import club.minnced.discord.webhook.WebhookClient;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -60,6 +61,7 @@ public class CommandManager extends ListenerAdapter {
             new LanguageCommand(bot),
             new CommandsCommand(bot),
             new PremiumCommand(bot),
+            new HideCommand(bot),
             new HelpCommand(bot)
         );
     }

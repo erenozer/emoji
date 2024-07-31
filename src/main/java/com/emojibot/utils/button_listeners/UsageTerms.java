@@ -1,4 +1,4 @@
-package com.emojibot.utils;
+package com.emojibot.utils.button_listeners;
 
 import java.time.Duration;
 import java.util.Timer;
@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bson.Document;
 
 import com.emojibot.BotConfig;
-import com.emojibot.events.ButtonListener;
-import com.emojibot.utils.language.Localization;
+import com.emojibot.utils.Localization;
+import com.emojibot.utils.MongoManager;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 
@@ -33,7 +33,7 @@ public class UsageTerms {
      */
     public static int checkUserStatus(String userId) {
         // Get the usage terms collection
-        MongoCollection<Document> collection = MongoManager.getUsageTermsCollection();
+        MongoCollection<Document> collection = MongoManager.getUserPrefCollection();
 
         if(collection == null)
             return -1;
@@ -45,7 +45,7 @@ public class UsageTerms {
 
         if(result != null) {
             // Check the approved field's value, default to false
-            var isApproved = result.getBoolean("approved", false); 
+            var isApproved = result.getBoolean("approved_terms", false); 
 
             if(isApproved) {
                 return 1;
@@ -64,8 +64,8 @@ public class UsageTerms {
      * @param newStatus new approval status of the user in the database
      */
     public static boolean setUserStatus(String userId, boolean newStatus) {
-        // Get the usage terms collection
-        MongoCollection<Document> collection = MongoManager.getUsageTermsCollection();
+        // Get the user collection
+        MongoCollection<Document> collection = MongoManager.getUserPrefCollection();
 
         if(collection == null) {
             return false;
@@ -80,7 +80,7 @@ public class UsageTerms {
         }
 
         // Create a document with set operator to update the approved field
-        Document update = new Document("$set", new Document("approved", newStatus));
+        Document update = new Document("$set", new Document("approved_terms", newStatus));
 
         // Enable upsert to insert the document if it doesn't exist
         UpdateOptions options = new UpdateOptions().upsert(true);

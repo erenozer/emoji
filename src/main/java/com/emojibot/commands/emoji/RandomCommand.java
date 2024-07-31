@@ -4,12 +4,12 @@ import java.util.Random;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.EmojiCache;
-import com.emojibot.utils.PremiumManager;
-import com.emojibot.utils.UsageTerms;
+import com.emojibot.utils.EmojiCache;
+import com.emojibot.utils.Localization;
+import com.emojibot.utils.button_listeners.PremiumManager;
+import com.emojibot.utils.button_listeners.UsageTerms;
 import com.emojibot.utils.command.EmojiCommand;
 import com.emojibot.utils.command.TopggManager;
-import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;

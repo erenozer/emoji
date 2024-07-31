@@ -1,4 +1,4 @@
-package com.emojibot;
+package com.emojibot.utils;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;

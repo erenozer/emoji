@@ -33,15 +33,6 @@ public class MongoManager {
         }
     }
 
-    public static MongoCollection<Document> getUsageTermsCollection() {
-        try {
-            return getDatabase().getCollection("usage_terms");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public static MongoCollection<Document> getUserPrefCollection() {
         try {
             return getDatabase().getCollection("user_preferences");

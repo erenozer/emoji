@@ -1,11 +1,8 @@
-package com.emojibot.events;
+package com.emojibot.utils.button_listeners;
 
 import com.emojibot.Bot;
 import com.emojibot.commands.emoji.ListCommand;
 import com.emojibot.commands.other.ShardCommand;
-import com.emojibot.utils.PremiumManager;
-import com.emojibot.utils.UsageTerms;
-import com.emojibot.utils.language.LanguageManager;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -33,6 +30,7 @@ public class ButtonListener extends ListenerAdapter {
             ListCommand.handleClick(event, true);
         });
 
+        // Shard command next/previous page buttons
         registerButtonHandler("shard:previous", event -> {
             ShardCommand.handleClick(event, false);
         });
@@ -62,6 +60,18 @@ public class ButtonListener extends ListenerAdapter {
             boolean result = LanguageManager.setUserLanguage(event.getUser().getId(), "tr");
 
             LanguageManager.handleClick(event, result, "tr");
+        });
+
+        // Hide command buttons
+        registerButtonHandler("hide:enable", event -> {
+            boolean result = HideManager.setServerHiddenStatus(event.getGuild().getId(), true);
+
+            HideManager.handleClick(event, result, true);
+        });
+        registerButtonHandler("hide:disable", event -> {
+            boolean result = HideManager.setServerHiddenStatus(event.getGuild().getId(), false);
+
+            HideManager.handleClick(event, result, false);
         });
 
         // Premium admin buttons for server premium status
@@ -130,12 +140,18 @@ public class ButtonListener extends ListenerAdapter {
         return id.toString();
     }
 
+    /**
+     * Handles the queue error and prints the log message if the message was deleted or not found
+     * This usually happens when the message with buttons gets deleted by someone before the buttons are expired
+     * @param throwable
+     * @param logMessage
+     */
     public static void handleQueueError(Throwable throwable, String logMessage) {
         if (throwable instanceof ErrorResponseException) {
             ErrorResponseException e = (ErrorResponseException) throwable;
             if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
                 // The message was deleted or not found, not printing stack trace for this
-                System.out.println(logMessage);
+                //System.out.println(logMessage);
             } else {
                 e.printStackTrace();
             }
