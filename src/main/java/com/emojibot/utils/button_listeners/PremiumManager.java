@@ -89,6 +89,11 @@ public class PremiumManager {
         // Update or insert the document
         collection.updateOne(filter, update, options);
 
+        // If premium is disabled for the server, disable hidden status of the server as well
+        if(!newStatus) {
+            HideManager.setServerHiddenStatus(serverId, false);
+        }
+
         return true;
     }
 

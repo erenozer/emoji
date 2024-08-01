@@ -1,7 +1,6 @@
 package com.emojibot.commands.premium;
 
 import com.emojibot.Bot;
-import com.emojibot.BotConfig;
 import com.emojibot.utils.Localization;
 import com.emojibot.utils.button_listeners.HideManager;
 import com.emojibot.utils.button_listeners.PremiumManager;
@@ -10,8 +9,6 @@ import com.emojibot.utils.command.EmojiCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class HideCommand extends EmojiCommand {
 

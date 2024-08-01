@@ -51,7 +51,10 @@ public class RandomCommand extends EmojiCommand {
 
         TopggManager topggManager = bot.getTopggManager();
         
-        if(!topggManager.hasVoted(userId) && !PremiumManager.getPremiumStatus(event.getGuild().getId())) {
+        boolean isPremium = PremiumManager.getPremiumStatus(event.getGuild().getId());
+        boolean hasVoted = topggManager.hasVoted(userId);
+
+        if(!hasVoted && !isPremium) {
             // User has not voted and the server is not premium, ask for vote
             TopggManager.sendVoteEmbed(event.getHook(), localization);
             return;
@@ -69,11 +72,22 @@ public class RandomCommand extends EmojiCommand {
             // Count is provided, get the value
             int count = (int)countInput.getAsInt();
 
-            if(count < 1 || count > 20) {
-                event.getHook().sendMessage(String.format(localization.getMsg("random_command", "invalid_count"), BotConfig.noEmoji())).queue();
+            if(count < 1) {
+                event.getHook().sendMessage(String.format(localization.getMsg("random_command", "lower_bound"), BotConfig.noEmoji())).queue();
                 return;
             }
 
+            if(count > 20 && !isPremium) {
+                event.getHook().sendMessage(String.format(localization.getMsg("random_command", "upper_bound_no_premium"), BotConfig.infoEmoji())).queue();
+                return;
+            }
+
+            if(count > 50) {
+                event.getHook().sendMessage(String.format(localization.getMsg("random_command", "upper_bound"), BotConfig.noEmoji())).queue();
+                return;
+            }
+
+            // Get random emojis as a list
             var randomEmojis = emojiCache.getRandomEmojis(count);
 
             if(randomEmojis.isEmpty()) {
@@ -83,6 +97,7 @@ public class RandomCommand extends EmojiCommand {
 
             StringBuilder emojiMentions = new StringBuilder();
 
+            // Turn the list of emojis into mentions in a single message
             for (RichCustomEmoji emoji : randomEmojis) {
                 emojiMentions.append(emoji.getAsMention()).append(" ");
             }
