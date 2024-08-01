@@ -1,4 +1,4 @@
-package com.emojibot.utils;
+package com.emojibot.utils.command;
 
 import java.text.Normalizer;
 import java.util.regex.Matcher;

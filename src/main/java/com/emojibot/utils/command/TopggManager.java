@@ -3,7 +3,7 @@ package com.emojibot.utils.command;
 import org.discordbots.api.client.DiscordBotListAPI;
 
 import com.emojibot.BotConfig;
-import com.emojibot.utils.language.Localization;
+import com.emojibot.utils.Localization;
 
 import club.minnced.discord.webhook.WebhookClient;
 import io.github.cdimascio.dotenv.Dotenv;

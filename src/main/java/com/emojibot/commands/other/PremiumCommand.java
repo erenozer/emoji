@@ -1,13 +1,11 @@
 package com.emojibot.commands.other;
 
 import java.awt.Color;
-import java.util.Objects;
-
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.utils.PremiumManager;
+import com.emojibot.utils.Localization;
+import com.emojibot.utils.button_listeners.PremiumManager;
 import com.emojibot.utils.command.EmojiCommand;
-import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -44,8 +42,8 @@ public class PremiumCommand extends EmojiCommand {
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        // If the user is an admin and the command is run on Emoji Bot server and an argument (server ID) is provided
-        if(BotConfig.getAdminIds().contains(event.getUser().getId()) && event.getGuild().getId().equals("232918641866178560") && event.getOptions().size() > 0) {
+        // If the user is an admin and the command is run on Emoji Bot/Testing server and an argument (server ID) is provided
+        if(BotConfig.getAdminIds().contains(event.getUser().getId()) && (event.getGuild().getId().equals("232918641866178560") || event.getGuild().getId().equals("368839796703100928") ) && event.getOptions().size() > 0) {
             // Admin control for premium servers
             var serverIdInput = event.getOption("hey").getAsString();
 

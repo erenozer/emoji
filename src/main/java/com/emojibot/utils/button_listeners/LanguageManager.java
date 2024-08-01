@@ -1,4 +1,4 @@
-package com.emojibot.utils.language;
+package com.emojibot.utils.button_listeners;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bson.Document;
 
 import com.emojibot.BotConfig;
-import com.emojibot.events.ButtonListener;
 import com.emojibot.utils.MongoManager;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
@@ -35,7 +34,7 @@ public class LanguageManager {
      * @param userId id of the user to get language of
      */
     public static String getUserLanguageString(String userId) {
-        // Get the usage terms collection
+        // Get the user preferences collection
         MongoCollection<Document> collection = MongoManager.getUserPrefCollection();
 
         if(collection == null)
@@ -88,8 +87,14 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Sets the language of the user in the database
+     * @param userId
+     * @param newLanguage
+     * @return
+     */
     public static boolean setUserLanguage(String userId, String newLanguage) {
-        // Get the usage terms collection
+        // Get the user preferences collection
         MongoCollection<Document> collection = MongoManager.getUserPrefCollection();
 
         if(collection == null) {

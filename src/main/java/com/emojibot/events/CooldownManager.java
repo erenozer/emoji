@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-//TODO timestamps for cooldown messages
 
 public class CooldownManager {
     private final Map<String, Map<String, Instant>> cooldowns = new HashMap<>();

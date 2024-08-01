@@ -10,9 +10,9 @@ import java.util.TimerTask;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.events.ButtonListener;
+import com.emojibot.utils.Localization;
+import com.emojibot.utils.button_listeners.ButtonListener;
 import com.emojibot.utils.command.EmojiCommand;
-import com.emojibot.utils.language.Localization;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -215,7 +215,7 @@ public class ShardCommand extends EmojiCommand {
         Localization localization = Localization.getLocalization(event.getUser().getId());
 
         MessageEmbed expiredEmbed = new EmbedBuilder()
-                .addField(localization.getMsg("shard_command", "button_expired"), localization.getMsg("shard_command", "button_expired_desc"), true)
+                .setTitle(localization.getMsg("shard_command", "button_expired"))
                 .setColor(BotConfig.getGeneralEmbedColor())
                 .build();
         try {

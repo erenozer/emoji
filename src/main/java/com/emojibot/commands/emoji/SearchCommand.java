@@ -1,10 +1,10 @@
 package com.emojibot.commands.emoji;
 
-import com.emojibot.EmojiCache;
-import com.emojibot.utils.EmojiInput;
-import com.emojibot.utils.UsageTerms;
+import com.emojibot.utils.EmojiCache;
+import com.emojibot.utils.Localization;
+import com.emojibot.utils.button_listeners.UsageTerms;
 import com.emojibot.utils.command.EmojiCommand;
-import com.emojibot.utils.language.Localization;
+import com.emojibot.utils.command.EmojiInput;
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 

@@ -1,7 +1,9 @@
-package com.emojibot.utils.language;
+package com.emojibot.utils;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import com.emojibot.utils.button_listeners.LanguageManager;
 
 public class Localization {
     private ResourceBundle messages;

@@ -1,8 +1,7 @@
-package com.emojibot.utils;
+package com.emojibot.utils.button_listeners;
 
 import java.awt.Color;
 import java.time.Duration;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bson.Document;
 
 import com.emojibot.BotConfig;
-import com.emojibot.events.ButtonListener;
+import com.emojibot.utils.MongoManager;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 
@@ -29,13 +28,14 @@ import net.dv8tion.jda.api.requests.ErrorResponse;
 public class PremiumManager {
     private static final ConcurrentHashMap<String, Timer> sessionTimers = new ConcurrentHashMap<>();
 
+
     /**
-     * Returns the language of the user from the database as a string, default to "en" if not found
-     * @return the language string like "en" or "tr"
-     * @param userId id of the user to get language of
+     * Get the premium status of a server
+     * @param server_id server id to check for
+     * @return true if the server has premium enabled
      */
     public static boolean getPremiumStatus(String server_id) {
-        // Get the usage terms collection
+        // Get the servers collection
         MongoCollection<Document> collection = MongoManager.getServersCollection();
 
         if(collection == null)
@@ -52,10 +52,15 @@ public class PremiumManager {
             return premiumEnabled;
         }
 
-        // User not found in the database
+        // Server not found in the database
         return false;
     }
 
+    /**
+     * Get the premium status as a string enabled/disabled
+     * @param server_id server id to check for
+     * @return
+     */
     private static String getServerPremiumStatusString(String server_id) {
         return getPremiumStatus(server_id) ? "enabled" : "disabled";
     }
@@ -83,6 +88,11 @@ public class PremiumManager {
 
         // Update or insert the document
         collection.updateOne(filter, update, options);
+
+        // If premium is disabled for the server, disable hidden status of the server as well
+        if(!newStatus) {
+            HideManager.setServerHiddenStatus(serverId, false);
+        }
 
         return true;
     }
@@ -119,13 +129,18 @@ public class PremiumManager {
         } catch (ErrorResponseException e) {
             if (e.getErrorResponse() == ErrorResponse.UNKNOWN_MESSAGE) {
                 // The message was deleted or not found
-                System.out.println("The message was deleted or not found, cannot update.");
+                //System.out.println("The message was deleted or not found, cannot update.");
             } else {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * Asks for confirmation to enable/disable premium
+     * @param hook
+     * @param serverId
+     */
     public static void askForConfirmation(InteractionHook hook, String serverId) {
         String userId = hook.getInteraction().getUser().getId();
 
@@ -154,7 +169,7 @@ public class PremiumManager {
             @Override
             public void run() {
                 MessageEmbed expiredEmbed = new EmbedBuilder()
-                    .addField("Buttons Expired", "You can run the command again", true)
+                    .setTitle("Buttons Expired")
                     .setColor(Color.YELLOW)
                     .build();
 

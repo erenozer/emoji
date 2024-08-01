@@ -1,8 +1,8 @@
 package com.emojibot.commands.other;
 
 import com.emojibot.Bot;
+import com.emojibot.utils.button_listeners.LanguageManager;
 import com.emojibot.utils.command.EmojiCommand;
-import com.emojibot.utils.language.LanguageManager;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.DiscordLocale;

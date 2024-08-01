@@ -4,10 +4,10 @@ import java.util.Objects;
 
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
-import com.emojibot.EmojiCache;
-import com.emojibot.utils.EmojiInput;
+import com.emojibot.utils.EmojiCache;
+import com.emojibot.utils.Localization;
 import com.emojibot.utils.command.EmojiCommand;
-import com.emojibot.utils.language.Localization;
+import com.emojibot.utils.command.EmojiInput;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
