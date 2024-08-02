@@ -48,6 +48,7 @@ tasks.shadowJar {
 }
 
 application {
-    // Specify the main class of your application
-    mainClass.set("com.emojibot.Bot") // Adjust this to your actual main class path
+    mainClass.set("com.emojibot.Bot") 
+    // Disable Java 9+ restrictions to allow Topgg library setStats method to work
+    applicationDefaultJvmArgs = listOf("--add-opens=java.base/java.lang=ALL-UNNAMED")
 }

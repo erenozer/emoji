@@ -48,7 +48,7 @@ public class Bot {
 
             DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createLight(getToken())
                     .setStatus(OnlineStatus.ONLINE)
-                    .setActivity(Activity.watching("/start to get started with Emoji!"))
+                    .setActivity(Activity.watching("/help | /yardım"))
                     .setMemberCachePolicy(MemberCachePolicy.NONE)
                     .enableCache(CacheFlag.EMOJI, CacheFlag.ROLE_TAGS)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.VOICE_STATE)
@@ -56,7 +56,6 @@ public class Bot {
                     .addEventListeners(new EventListener(), new CommandManager(this), emojiCache, new ButtonListener(this));
 
             shardManager = builder.build();
-
 
             // Shutdown hook to disconnect from MongoDB
             Runtime.getRuntime().addShutdownHook(new Thread(MongoManager::disconnect));
