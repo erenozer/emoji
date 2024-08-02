@@ -4,8 +4,7 @@ import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.commands.emoji.*;
 import com.emojibot.commands.other.*;
-import com.emojibot.commands.premium.HideCommand;
-import com.emojibot.commands.premium.PremiumCommand;
+import com.emojibot.commands.premium.*;
 import com.emojibot.commands.staff.*;
 import com.emojibot.utils.Localization;
 import com.emojibot.utils.button_listeners.LanguageManager;
@@ -62,6 +61,7 @@ public class CommandManager extends ListenerAdapter {
             new LanguageCommand(bot),
             new CommandsCommand(bot),
             new PremiumCommand(bot),
+            new PackCommand(bot),
             new StatsCommand(bot),
             new HideCommand(bot),
             new HelpCommand(bot)

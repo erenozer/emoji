@@ -15,11 +15,11 @@ public class HideCommand extends EmojiCommand {
     public HideCommand(Bot bot) {
         super(bot);
         this.name = "hide";
-        this.description = "Hide your server's emojis from other servers!";
+        this.description = "Hides your server's emojis from other servers";
         this.cooldownDuration = 5;
 
         this.localizedNames.put(DiscordLocale.TURKISH, "gizle");
-        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Sunucunuzun emojilerini diğer sunuculardan gizleyin!");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Sunucudaki emojileri diğer sunuculardan gizler");
 
         this.permission = Permission.MANAGE_SERVER;
     }

@@ -35,6 +35,9 @@ dependencies {
     // top.gg 
     implementation("org.discordbots:DBL-Java-Library:2.1.2")
 
+    // zip files
+    implementation("commons-io:commons-io:2.11.0")
+
 }
 
 tasks.test {
