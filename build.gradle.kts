@@ -35,6 +35,9 @@ dependencies {
     // top.gg 
     implementation("org.discordbots:DBL-Java-Library:2.1.2")
 
+    // zip files
+    implementation("commons-io:commons-io:2.11.0")
+
 }
 
 tasks.test {
@@ -48,6 +51,7 @@ tasks.shadowJar {
 }
 
 application {
-    // Specify the main class of your application
-    mainClass.set("com.emojibot.Bot") // Adjust this to your actual main class path
+    mainClass.set("com.emojibot.Bot") 
+    // Disable Java 9+ restrictions to allow Topgg library setStats method to work
+    applicationDefaultJvmArgs = listOf("--add-opens=java.base/java.lang=ALL-UNNAMED")
 }

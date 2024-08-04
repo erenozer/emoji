@@ -6,6 +6,7 @@ import com.emojibot.utils.EmojiCache;
 import com.emojibot.utils.MongoManager;
 import com.emojibot.utils.button_listeners.ButtonListener;
 import com.emojibot.utils.command.TopggManager;
+import com.emojibot.utils.menu_listeners.SelectMenuListener;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -48,15 +49,14 @@ public class Bot {
 
             DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createLight(getToken())
                     .setStatus(OnlineStatus.ONLINE)
-                    .setActivity(Activity.watching("/start to get started with Emoji!"))
+                    .setActivity(Activity.watching("/help | /yardım"))
                     .setMemberCachePolicy(MemberCachePolicy.NONE)
                     .enableCache(CacheFlag.EMOJI, CacheFlag.ROLE_TAGS)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.VOICE_STATE)
                     .enableIntents(GatewayIntent.GUILD_EMOJIS_AND_STICKERS) // Enable required intents
-                    .addEventListeners(new EventListener(), new CommandManager(this), emojiCache, new ButtonListener(this));
+                    .addEventListeners(new EventListener(), new CommandManager(this), emojiCache, new ButtonListener(this), new SelectMenuListener(this));
 
             shardManager = builder.build();
-
 
             // Shutdown hook to disconnect from MongoDB
             Runtime.getRuntime().addShutdownHook(new Thread(MongoManager::disconnect));

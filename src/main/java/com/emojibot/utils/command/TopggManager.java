@@ -20,10 +20,10 @@ public class TopggManager {
 
     private static final WebhookClient logHook = WebhookClient.withUrl(config.get("URL_LOGS_WEBHOOK"));
     
-    public DiscordBotListAPI topgg_api;
+    public DiscordBotListAPI api;
 
     public TopggManager() {
-        topgg_api = new DiscordBotListAPI.Builder()
+        api = new DiscordBotListAPI.Builder()
                 .token(config.get("TOPGG_TOKEN"))
                 .botId("414878659267133445")
                 .build();
@@ -45,7 +45,7 @@ public class TopggManager {
         AtomicBoolean voted = new AtomicBoolean(false);
 
         // Use CompletableFuture to handle the asynchronous call to the API
-        CompletableFuture<Boolean> future = topgg_api.hasVoted(userId).toCompletableFuture();
+        CompletableFuture<Boolean> future = api.hasVoted(userId).toCompletableFuture();
 
         try {
             future.whenComplete((hasVoted, err) -> {
@@ -68,8 +68,27 @@ public class TopggManager {
         return voted.get();
     }
 
+    /*
+     ! This method does not work unless compiled with gradle run/build. 
+     */
+    public CompletableFuture<Boolean> updateStats(int guildCount) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+    
+        api.setStats(guildCount).whenComplete((response, err) -> {
+            if (err != null) {
+                logHook.send(":warning: Error while updating bot stats on top.gg\n" + err.getMessage());
+                future.complete(false); 
+            } else {
+                logHook.send(":information_source: Successfully updated bot stats on top.gg.");
+                future.complete(true);
+            }
+        });
+    
+        return future;
+    }
+    
     public DiscordBotListAPI getTopggApi() {
-        return topgg_api;
+        return api;
     }
 
 }
