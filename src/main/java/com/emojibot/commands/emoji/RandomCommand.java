@@ -99,7 +99,9 @@ public class RandomCommand extends EmojiCommand {
 
             // Turn the list of emojis into mentions in a single message
             for (RichCustomEmoji emoji : randomEmojis) {
-                emojiMentions.append(emoji.getAsMention()).append(" ");
+                if(emoji.isAvailable()) {
+                    emojiMentions.append(emoji.getAsMention()).append(" ");
+                }
             }
 
             // Remove the trailing space

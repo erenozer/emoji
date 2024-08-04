@@ -36,7 +36,7 @@ public class RandomUploadCommand extends EmojiCommand {
         super(bot);
         this.name = "random-upload";
         this.description = "Uploads multiple random emojis to your server easily";
-        this.cooldownDuration = 6;
+        this.cooldownDuration = 20;
 
         this.localizedNames.put(DiscordLocale.TURKISH, "rastgele-yükle");
         this.localizedDescriptions.put(DiscordLocale.TURKISH, "Sunucunuza yeni rastgele emojiler yükler!");
@@ -110,49 +110,59 @@ public class RandomUploadCommand extends EmojiCommand {
 
     public static void handleSelect(StringSelectInteractionEvent event) {
         if (!event.getComponentId().contains(":random_emojis")) return;
-
+    
         Localization localization = Localization.getLocalization(event.getUser().getId());
-
         List<String> selectedEmojiIds = event.getValues();
-
         AtomicBoolean failEncountered = new AtomicBoolean(false);
-
-        for (String emojiId : selectedEmojiIds) {
-            RichCustomEmoji emoji = event.getJDA().getEmojiById(emojiId);
-            if (emoji != null) {
+    
+        Runnable uploadEmojis = () -> {
+            for (String emojiId : selectedEmojiIds) {
+                RichCustomEmoji emoji = event.getJDA().getEmojiById(emojiId);
+                if (emoji == null) {
+                    // Log the issue or notify the user that the emoji could not be found
+                    failEncountered.set(true);
+                    continue;
+                }
+    
                 try {
-                    // Fetch emoji image as byte array
+                    // Check if the emoji image can be fetched
                     InputStream inputStream = new URL(emoji.getImageUrl()).openStream();
                     Icon icon = Icon.from(inputStream);
                     
-                    // Upload emoji to the server with a delay
+                    // Ensure the rate limit is respected
+                    TimeUnit.MILLISECONDS.sleep(500);
+    
                     event.getGuild().createEmoji(emoji.getName(), icon)
-                            .queue(success -> {
-                                try {
-                                    // Add a delay between each upload to reduce rate limiting
-                                    TimeUnit.MILLISECONDS.sleep(500); 
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
+                            .queue(
+                                success -> {
+                                    // Log successful upload if needed
+                                },
+                                failure -> {
+                                    failEncountered.set(true);
+                                    // Log failure for debugging
                                 }
-                            }, failure -> failEncountered.set(true));
+                            );
                 } catch (Exception e) {
-                    // Ignore the exception and continue with the next emoji
+                    failEncountered.set(true);
+                    // Log exception for debugging
                 }
             }
-        }
-
-        // Known issue: Because of the async nature of the uploads, the response may be sent before the emojis are uploaded
-        // Therefore, the response may not be accurate if one of the uploads fail after the response is sent
-        // Not a critical problem so not updating it to wait with a CompletableFuture or similar to keep implementation simple.
-
+        };
+    
+        // Use a new thread to handle async processing
+        new Thread(uploadEmojis).start();
+    
+        // Known issue: The response might be sent before the emojis are fully uploaded
         String response;
         if (failEncountered.get()) {
             response = String.format(localization.getMsg("randomupload_command", "success_with_failed"), BotConfig.yesEmoji());
         } else {
             response = String.format(localization.getMsg("randomupload_command", "success"), BotConfig.yesEmoji());
         }
-
+    
         // Edit the original message to remove the select menu and add the result message
         event.editMessage(response).setComponents().queue();
     }
+
+    
 }
