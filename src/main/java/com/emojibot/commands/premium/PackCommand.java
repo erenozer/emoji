@@ -15,16 +15,13 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class PackCommand extends EmojiCommand {
-
-    private static final int TIME_PER_EMOJI_MS = 100; // Approximate time to process each emoji in milliseconds
 
     public PackCommand(Bot bot) {
         super(bot);
@@ -54,16 +51,9 @@ public class PackCommand extends EmojiCommand {
         }
 
         List<RichCustomEmoji> emojis = guild.getEmojis();
-        int emojiCount = emojis.size();
-        long estimatedTimeMillis = emojiCount * TIME_PER_EMOJI_MS;
-        long estimatedTimeMinutes = TimeUnit.MILLISECONDS.toMinutes(estimatedTimeMillis);
-        long estimatedTimeSeconds = TimeUnit.MILLISECONDS.toSeconds(estimatedTimeMillis) % 60;
 
-        // Notify user of estimated time
         event.getHook().sendMessage(
-            String.format(localization.getMsg("pack_command", "starting_process"), BotConfig.infoEmoji())
-                .replace("{time}", String.format("%d minute(s) %d second(s)", estimatedTimeMinutes, estimatedTimeSeconds))
-        ).queue();
+            String.format(localization.getMsg("pack_command", "starting_process"), BotConfig.infoEmoji())).queue();
 
         try {
             File zipFile = createZipFile(emojis);
@@ -96,8 +86,10 @@ public class PackCommand extends EmojiCommand {
         try (FileOutputStream fos = new FileOutputStream(zipFile);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
 
+            Set<String> fileNames = new HashSet<>();
+
             for (RichCustomEmoji emoji : emojis) {
-                String fileName = getFileName(emoji);
+                String fileName = getFileName(emoji, fileNames);
                 URL emojiUrl = new URL(emoji.getImageUrl());
 
                 try (InputStream inputStream = emojiUrl.openStream()) {
@@ -106,7 +98,6 @@ public class PackCommand extends EmojiCommand {
                     IOUtils.copy(inputStream, zos);
                     zos.closeEntry();
                 } catch (IOException e) {
-                    e.printStackTrace();
                     System.out.println("Error downloading or adding emoji: " + emoji.getName() + " " + e);
                 }
             }
@@ -116,10 +107,19 @@ public class PackCommand extends EmojiCommand {
         return zipFile;
     }
 
-    private String getFileName(RichCustomEmoji emoji) {
+    private String getFileName(RichCustomEmoji emoji, Set<String> fileNames) {
         String name = emoji.getName();
         String format = emoji.getImageUrl().contains(".gif") ? "gif" :
                         emoji.getImageUrl().contains(".jpg") ? "jpg" : "png";
-        return name + "." + format;
+        String fileName = name + "." + format;
+
+        int counter = 1;
+        while (fileNames.contains(fileName)) {
+            fileName = name + "_" + counter + "." + format;
+            counter++;
+        }
+
+        fileNames.add(fileName);
+        return fileName;
     }
 }

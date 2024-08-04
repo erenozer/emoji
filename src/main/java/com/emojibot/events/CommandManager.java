@@ -63,6 +63,7 @@ public class CommandManager extends ListenerAdapter {
             new PremiumCommand(bot),
             new PackCommand(bot),
             new StatsCommand(bot),
+            new RandomUploadCommand(bot),
             new HideCommand(bot),
             new HelpCommand(bot)
         );

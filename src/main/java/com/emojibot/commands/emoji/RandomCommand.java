@@ -30,9 +30,9 @@ public class RandomCommand extends EmojiCommand {
         this.localizedNames.put(DiscordLocale.TURKISH, "rastgele");
         this.localizedDescriptions.put(DiscordLocale.TURKISH, "Rastgele emojiler ile yeni emojiler bulun!");
 
-        OptionData option = new OptionData(OptionType.INTEGER, "count", "Emoji count, up to 20 emojis at once", false);
-        option.setNameLocalization(DiscordLocale.TURKISH, "sayı");
-        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Emoji sayısı, aynı anda en fazla 20 emoji");
+        OptionData option = new OptionData(OptionType.INTEGER, "count", "Random emoji count", false);
+        option.setNameLocalization(DiscordLocale.TURKISH, "adet");
+        option.setDescriptionLocalization(DiscordLocale.TURKISH, "Rastgele emoji adeti");
 
         this.args.add(option);
 
