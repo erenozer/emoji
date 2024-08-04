@@ -1,13 +1,5 @@
 package com.emojibot.commands.staff;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.emojibot.Bot;
 import com.emojibot.BotConfig;
 import com.emojibot.utils.EmojiCache;
@@ -17,7 +9,6 @@ import com.emojibot.utils.button_listeners.UsageTerms;
 import com.emojibot.utils.command.EmojiCommand;
 import com.emojibot.utils.command.TopggManager;
 import com.emojibot.utils.menu_listeners.SelectMenuListener;
-
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
@@ -29,17 +20,29 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.entities.Icon;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class RandomUploadCommand extends EmojiCommand {
+    private static final Logger logger = Logger.getLogger(RandomUploadCommand.class.getName());
+    private static final RateLimiter rateLimiter = new RateLimiter(1000); // 1000ms delay
     private EmojiCache emojiCache;
 
     public RandomUploadCommand(Bot bot) {
         super(bot);
         this.name = "random-upload";
-        this.description = "Uploads multiple random emojis to your server easily";
-        this.cooldownDuration = 6;
+        this.description = "Upload multiple random emojis to your server";
+        this.cooldownDuration = 20;
 
         this.localizedNames.put(DiscordLocale.TURKISH, "rastgele-yükle");
-        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Sunucunuza yeni rastgele emojiler yükler!");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Sunucunuza yeni rastgele emojiler yükler");
 
         OptionData option = new OptionData(OptionType.INTEGER, "count", "Emoji count, up to 20 emojis at once", false);
         option.setNameLocalization(DiscordLocale.TURKISH, "adet");
@@ -96,10 +99,11 @@ public class RandomUploadCommand extends EmojiCommand {
                 .setPlaceholder(localization.getMsg("randomupload_command", "click_here"))
                 .setRequiredRange(1, count);
 
+
         // Add the options to the select menu with the emoji image
         for (RichCustomEmoji emoji : randomEmojis) {
             if (uniqueEmojiIds.add(emoji.getId())) {
-                selectMenu.addOption(emoji.getName(), emoji.getId(), Emoji.fromFormatted(emoji.getAsMention()));
+                selectMenu.addOption(emoji.getName(), emoji.isAnimated() ? "a:" + emoji.getId() + ":" + emoji.getName() : "n:" + emoji.getId() + ":" + emoji.getName(), Emoji.fromFormatted(emoji.getAsMention()));
             }
         }
 
@@ -112,39 +116,57 @@ public class RandomUploadCommand extends EmojiCommand {
         if (!event.getComponentId().contains(":random_emojis")) return;
 
         Localization localization = Localization.getLocalization(event.getUser().getId());
-
         List<String> selectedEmojiIds = event.getValues();
-
         AtomicBoolean failEncountered = new AtomicBoolean(false);
 
-        for (String emojiId : selectedEmojiIds) {
-            RichCustomEmoji emoji = event.getJDA().getEmojiById(emojiId);
-            if (emoji != null) {
+        Runnable uploadEmojis = () -> {
+            for (String emojiId : selectedEmojiIds) {   
+                String emojiUrl;
+                String newEmojiId = emojiId;
+                String emojiName;
+                String[] contents = newEmojiId.split(":");
+
+                if (contents.length != 3) {
+                    logger.warning("Invalid emoji ID: " + emojiId);
+                    failEncountered.set(true);
+                    continue;
+                }
+
+                if(contents[0].equals("a")) {
+                    newEmojiId = contents[1];
+                    emojiUrl = String.format("https://cdn.discordapp.com/emojis/%s.gif?&quality=lossless", newEmojiId);
+                    emojiName = contents[2];
+                } else {
+                    newEmojiId = contents[1];
+                    emojiUrl = String.format("https://cdn.discordapp.com/emojis/%s.png?quality=lossless", newEmojiId);
+                    emojiName = contents[2];
+                }
+
                 try {
-                    // Fetch emoji image as byte array
-                    InputStream inputStream = new URL(emoji.getImageUrl()).openStream();
+                    rateLimiter.acquire(); // Ensure rate limiting
+                    InputStream inputStream = new URL(emojiUrl).openStream();
                     Icon icon = Icon.from(inputStream);
-                    
-                    // Upload emoji to the server with a delay
-                    event.getGuild().createEmoji(emoji.getName(), icon)
-                            .queue(success -> {
-                                try {
-                                    // Add a delay between each upload to reduce rate limiting
-                                    TimeUnit.MILLISECONDS.sleep(500); 
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                }
-                            }, failure -> failEncountered.set(true));
+                    inputStream.close(); // Ensure the InputStream is closed
+
+                    event.getGuild().createEmoji(emojiName, icon)
+                        .queue(
+                            success -> logger.info("Successfully uploaded emoji: " + emojiName),
+                            failure -> {
+                                logger.log(Level.SEVERE, "Failed to upload emoji: " + emojiName, failure);
+                                failEncountered.set(true);
+                            }
+                        );
                 } catch (Exception e) {
-                    // Ignore the exception and continue with the next emoji
+                    logger.log(Level.SEVERE, "Exception occurred while uploading emoji: " + emojiName, e);
+                    failEncountered.set(true);
                 }
             }
-        }
+        };
 
-        // Known issue: Because of the async nature of the uploads, the response may be sent before the emojis are uploaded
-        // Therefore, the response may not be accurate if one of the uploads fail after the response is sent
-        // Not a critical problem so not updating it to wait with a CompletableFuture or similar to keep implementation simple.
+        // Use Executors to manage thread pool
+        Executors.newSingleThreadExecutor().execute(uploadEmojis);
 
+        // Respond to the user
         String response;
         if (failEncountered.get()) {
             response = String.format(localization.getMsg("randomupload_command", "success_with_failed"), BotConfig.yesEmoji());
@@ -152,7 +174,23 @@ public class RandomUploadCommand extends EmojiCommand {
             response = String.format(localization.getMsg("randomupload_command", "success"), BotConfig.yesEmoji());
         }
 
-        // Edit the original message to remove the select menu and add the result message
         event.editMessage(response).setComponents().queue();
+    }
+
+    // Custom Rate Limiter class
+    private static class RateLimiter {
+        private final long rateLimitMs;
+
+        public RateLimiter(long rateLimitMs) {
+            this.rateLimitMs = rateLimitMs;
+        }
+
+        public void acquire() {
+            try {
+                Thread.sleep(rateLimitMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 }

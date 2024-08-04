@@ -36,20 +36,10 @@ public class Bot {
         try {
             // Initialize the MongoDB connection
             MongoManager.connect();
-            /*
-            // Calculate the number of shards needed manually if auto is not good enough
-            int totalGuilds = 96500;
-            int maxGuildsPerShard = 1500; // Adjust based on your performance needs
-
-            int numberOfShards = (int) Math.ceil((double) totalGuilds / maxGuildsPerShard);
-            System.out.println("Total shard count: " + numberOfShards);
-            */
             
-            // Blue emoji color - 0xa7cfe2
-
             DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createLight(getToken())
                     .setStatus(OnlineStatus.ONLINE)
-                    .setActivity(Activity.watching("/help | /yardım"))
+                    .setActivity(Activity.watching("/help | /yardım | Emoji bot is back! 🎉"))
                     .setMemberCachePolicy(MemberCachePolicy.NONE)
                     .enableCache(CacheFlag.EMOJI, CacheFlag.ROLE_TAGS)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS, CacheFlag.VOICE_STATE)
