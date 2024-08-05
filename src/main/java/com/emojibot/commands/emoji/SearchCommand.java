@@ -25,7 +25,7 @@ public class SearchCommand extends EmojiCommand {
     public SearchCommand(Bot bot) {
         super(bot);
         this.name = "search";
-        this.description = "Search for specific emojis by name, result can contain similar named emojis too!";
+        this.description = "Search for specific emojis by name, result can contain similar named emojis!";
         this.cooldownDuration = 6;
         this.botPermission = Permission.MESSAGE_EXT_EMOJI;
 
@@ -94,8 +94,11 @@ public class SearchCommand extends EmojiCommand {
             if (count >= 25) {
                 break;
             }
-            replyMessage.append(emoji.getAsMention()).append(" ");
-            count++;
+            
+            if(emoji.isAvailable()) {
+                replyMessage.append(emoji.getAsMention()).append(" ");
+                count++;
+            }
         }
         event.getHook().sendMessage(replyMessage.toString()).queue();
     }

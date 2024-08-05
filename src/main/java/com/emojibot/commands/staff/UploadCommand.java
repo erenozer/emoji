@@ -22,7 +22,7 @@ public class UploadCommand extends EmojiCommand {
     public UploadCommand(Bot bot) {
         super(bot);
         this.name = "upload";
-        this.description = "Upload an emoji to your server";
+        this.description = "Uploads an emoji to your server";
         this.cooldownDuration = 4;
 
         this.localizedNames.put(DiscordLocale.TURKISH, "yükle");
@@ -132,7 +132,7 @@ public class UploadCommand extends EmojiCommand {
         event.getGuild().createEmoji(emojiName, icon).reason(event.getUser().toString())
             .queue(
                 emoji -> event.getHook().sendMessage(String.format(localization.getMsg("upload_command", "success"), BotConfig.yesEmoji(), emoji.getAsMention())).queue(),
-                error -> event.getHook().sendMessage(String.format(localization.getMsg("upload_command", "failed"), BotConfig.noEmoji())).queue()
+                error -> event.getHook().sendMessage(String.format(localization.getMsg("upload_command", "upload_failed"), BotConfig.noEmoji())).queue()
             );
     }
-}
+} 

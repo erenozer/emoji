@@ -19,7 +19,7 @@ public class StatsCommand extends EmojiCommand {
     public StatsCommand(Bot bot) {
         super(bot);
         this.name = "stats";
-        this.description = "Shows the statistics of the bot";
+        this.description = "Shows the stats of the bot";
         this.cooldownDuration = 6;
 
         this.localizedNames.put(DiscordLocale.TURKISH, "istatistik");
@@ -48,7 +48,7 @@ public class StatsCommand extends EmojiCommand {
             .setAuthor(localization.getMsg("stats_command", "title"), null, event.getJDA().getSelfUser().getAvatarUrl())
             .addField(localization.getMsg("stats_command", "guilds"), String.valueOf(totalGuildCount), true)
             .addField(localization.getMsg("stats_command", "shards"), String.valueOf(bot.getShardManager().getShardsTotal()), true)
-            .addBlankField(false)
+            .addBlankField(true)
             .addField(localization.getMsg("stats_command", "ping"), String.format("%sms | %sms", gatewayPing, restPing), true)
             .addField(localization.getMsg("stats_command", "uptime"), uptimeFormatted, true)
             .setColor(BotConfig.getGeneralEmbedColor())
@@ -57,6 +57,7 @@ public class StatsCommand extends EmojiCommand {
         event.replyEmbeds(statsEmbed).queue();
 
         // Afterwards, update the server count on top.gg if user is an admin & bot is not in dev mode
+        /* 
         if(BotConfig.getAdminIds().contains(event.getUser().getId()) && !BotConfig.getDevMode()) {
             bot.getTopggManager().updateStats(totalGuildCount).thenAccept(success -> {
               if(success) {
@@ -66,6 +67,7 @@ public class StatsCommand extends EmojiCommand {
               }  
             });
         }
+        */
     }
 
     private String getFormattedUptime(Localization localization) {
