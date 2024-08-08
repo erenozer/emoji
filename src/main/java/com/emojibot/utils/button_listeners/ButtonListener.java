@@ -76,12 +76,16 @@ public class ButtonListener extends ListenerAdapter {
 
         // Premium admin buttons for server premium status
         registerButtonHandler("premium:disable", event -> {
-            boolean result = PremiumManager.setServerPremium(event.getGuild().getId(), false);
+            String serverId = event.getButton().getId().split(":")[4];
+
+            boolean result = PremiumManager.setServerPremium(serverId, false);
             
             PremiumManager.handleClick(event, result, false);
         });
         registerButtonHandler("premium:enable", event -> {
-            boolean result = PremiumManager.setServerPremium(event.getGuild().getId(), true);
+            String serverId = event.getButton().getId().split(":")[4];
+
+            boolean result = PremiumManager.setServerPremium(serverId, true);
 
             PremiumManager.handleClick(event, result, true);
         });
@@ -107,7 +111,10 @@ public class ButtonListener extends ListenerAdapter {
         String[] contents = event.getComponentId().split(":");
         int length = contents.length;
 
-        if(length != 4 && length != 3) {
+        // Usage terms button have length 3
+        // Other buttons have length 4
+        // Premium buttons have length 5
+        if(!(length >= 3 && length <= 5)) {
             throw new IllegalArgumentException("Button ID is not valid!");
         }
 
@@ -118,9 +125,12 @@ public class ButtonListener extends ListenerAdapter {
             return;
         }
 
-        // Usage warning buttons do not include a command name, if that is the case, handle accordingly
-        String actionName = length == 4 ? String.format("%s:%s", contents[2], contents[3]) : contents[2];
+        // Different syntaxes, handle them too
+        // Usage warning buttons do not include a command name
+        // Premium buttons use a syntax session:userid:premium:disable:serverId
+        String actionName = (length == 4 || length == 5) ? String.format("%s:%s", contents[2], contents[3]) : contents[2];
 
+        System.out.println(actionName);
         buttonHandlers.get(actionName).accept(event);
     }
 

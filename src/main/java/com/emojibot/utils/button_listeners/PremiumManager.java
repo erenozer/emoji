@@ -147,8 +147,9 @@ public class PremiumManager {
         // Session ID will contain uuid:userId
         String sessionId = ButtonListener.createUniqueId(userId);
 
-        String cancelButtonId = sessionId + ":premium:disable";
-        String confirmButtonId = sessionId + ":premium:enable";
+        // Use a different button syntax to include server IDs
+        String cancelButtonId = sessionId + ":premium:disable:" + serverId;
+        String confirmButtonId = sessionId + ":premium:enable:" + serverId;
 
         Button cancelButton = Button.of(ButtonStyle.DANGER, cancelButtonId, "Disable Premium", Emoji.fromFormatted(BotConfig.noEmoji()));
         Button confirmButton = Button.of(ButtonStyle.SUCCESS, confirmButtonId, "Enable Premium", Emoji.fromFormatted(BotConfig.yesEmoji()));
