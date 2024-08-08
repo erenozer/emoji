@@ -130,7 +130,6 @@ public class ButtonListener extends ListenerAdapter {
         // Premium buttons use a syntax session:userid:premium:disable:serverId
         String actionName = (length == 4 || length == 5) ? String.format("%s:%s", contents[2], contents[3]) : contents[2];
 
-        System.out.println(actionName);
         buttonHandlers.get(actionName).accept(event);
     }
 
