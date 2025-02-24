@@ -13,7 +13,7 @@ Emoji Bot is a powerful Discord bot that allows users to manage and interact wit
 
 ## Use Emoji Bot
 
-1. **Invite the bot** to your server: [Click here]([https://top.gg/bot/emoji/invite](https://discord.com/oauth2/authorize?client_id=414878659267133445)
+1. **Invite the bot** to your server: [Click here](https://discord.com/oauth2/authorize?client_id=414878659267133445)
 2. Use `/help` to explore available commands.
 
 ## Hosting & Development
