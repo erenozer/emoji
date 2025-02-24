@@ -28,7 +28,8 @@ If you'd like to contribute or report issues, feel free to open a pull request o
 
 ## License
 
-Emoji Bot is open-source and available under the [MIT License](LICENSE).
+Emoji Bot is open-source and available under the [GNU General Public License v3.0.](LICENSE).
+You are free to use, modify, and distribute it, but any modifications must also be open-source under the same license.
 
 ---
 
