@@ -49,7 +49,8 @@ public class HelpCommand extends EmojiCommand {
         
         Button inviteButton = Button.of(ButtonStyle.LINK, "https://discord.com/oauth2/authorize?client_id=414878659267133445", localization.getMsg("help_command", "add_me_to_server"), Emoji.fromFormatted("<:emoji:728286263429300274>"));
         Button serverButton = Button.of(ButtonStyle.LINK, "https://discord.gg/U5v2csS", localization.getMsg("help_command", "join_support_server"), Emoji.fromUnicode("❓"));
-        event.getHook().sendMessageEmbeds(helpEmbed).setComponents(ActionRow.of(inviteButton), ActionRow.of(serverButton)).queue();
+        Button voteButton = Button.of(ButtonStyle.LINK, "https://top.gg/bot/emoji/vote", localization.getMsg("help_command", "vote_me"), Emoji.fromUnicode("🤩"));
+        event.getHook().sendMessageEmbeds(helpEmbed).setComponents(ActionRow.of(inviteButton), ActionRow.of(serverButton), ActionRow.of(voteButton)).queue();
 
     }
 }

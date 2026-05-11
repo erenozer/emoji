@@ -12,11 +12,11 @@ public class PingCommand extends EmojiCommand {
     public PingCommand(Bot bot) {
         super(bot);
         this.name = "ping";
-        this.description = "Pong! - Shows the latency of the bot";
+        this.description = "Shows the latency of the bot";
         this.cooldownDuration = 6;
 
         this.localizedNames.put(DiscordLocale.TURKISH, "ping");
-        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Pong! - Botun gecikmesini gösterir");
+        this.localizedDescriptions.put(DiscordLocale.TURKISH, "Botun gecikmesini gösterir");
     }
 
     @Override

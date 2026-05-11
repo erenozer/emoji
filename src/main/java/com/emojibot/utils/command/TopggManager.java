@@ -31,7 +31,7 @@ public class TopggManager {
 
     public static void sendVoteEmbed(InteractionHook hook, Localization localization) {
         MessageEmbed voteEmbed = new EmbedBuilder()
-                .setAuthor(localization.getMsg("vote_embed", "title"), "https://top.gg/bot/emoji/vote")
+                //.setAuthor(localization.getMsg("vote_embed", "title"), "https://top.gg/bot/emoji/vote")
                 .setDescription(localization.getMsg("vote_embed", "desc"))
                 .setFooter(localization.getMsg("vote_embed", "footer"), "https://cdn.discordapp.com/emojis/727948775884324925.webp?size=240&quality=lossless")
                 .setColor(BotConfig.getGeneralEmbedColor())
